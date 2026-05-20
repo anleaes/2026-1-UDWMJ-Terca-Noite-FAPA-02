@@ -1,2 +1,4 @@
 hotelapp/__pycache__/*
 .env
+/apps/core/__pycache__/*
+/apps/core/migrations/*
