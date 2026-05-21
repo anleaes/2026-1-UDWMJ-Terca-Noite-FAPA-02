@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Hóspedes - {{ block.super }}{% endblock title %}
+
+{% block body %}
+<h1>Hóspedes</h1>
+
+<form method="get" action="{% url 'guests:search_guests' %}">
+    <input type="text" name="query" placeholder="Buscar por sobrenome..." value="{{ query|default:'' }}">
+    <button type="submit">Buscar</button>
+</form>
+
+<p><a href="{% url 'guests:add_guest' %}">Novo Hóspede</a></p>
+
+<ul>
+{% for guest in guests %}
+    <li>
+        <h3>{{ guest.first_name }} {{ guest.last_name }}</h3>
+        <p>Documento: {{ guest.document }} | Gênero: {{ guest.get_gender_display }}</p>
+        <p>Telefone: {{ guest.phone }} | E-mail: {{ guest.email }}</p>
+        <p>Pontos de fidelidade: {{ guest.loyalty_points }}</p>
+        {% if guest.profile_photo %}<img src="{{ guest.profile_photo.url }}" width="120">{% endif %}
+        <p>
+            <a href="{% url 'guests:edit_guest' guest.id %}">Editar</a>
+            <a href="{% url 'guests:delete_guest' guest.id %}" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+        </p>
+    </li>
+{% empty %}
+    <li>Nenhum hóspede cadastrado.</li>
+{% endfor %}
+</ul>
+{% endblock body %}
