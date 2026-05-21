@@ -6,3 +6,5 @@ hotelapp/__pycache__/*
 /apps/service_categories/migrations/*
 /apps/services/__pycache__/*
 /apps/services/migrations/*
+/apps/accounts/__pycache__/*
+/apps/accounts/migrations/*
