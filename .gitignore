@@ -10,3 +10,5 @@ hotelapp/__pycache__/*
 /apps/accounts/migrations/*
 /apps/persons/__pycache__/*
 /apps/persons/migrations/*
+/apps/guests/__pycache__/*
+/apps/guests/migrations/*

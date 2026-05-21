@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'services.apps.ServicesConfig',
     'accounts.apps.AccountsConfig',
     'persons.apps.PersonsConfig',
+    'guests.apps.GuestsConfig',
 ]
 
 MIDDLEWARE = [
