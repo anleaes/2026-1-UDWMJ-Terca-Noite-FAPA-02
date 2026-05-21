@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'persons.apps.PersonsConfig',
     'guests.apps.GuestsConfig',
     'employees.apps.EmployeesConfig',
+    'properties.apps.PropertiesConfig',
 ]
 
 MIDDLEWARE = [
