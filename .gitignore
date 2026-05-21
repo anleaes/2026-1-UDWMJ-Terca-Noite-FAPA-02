@@ -2,3 +2,5 @@ hotelapp/__pycache__/*
 .env
 /apps/core/__pycache__/*
 /apps/core/migrations/*
+/apps/service_categories/__pycache__/*
+/apps/service_categories/migrations/*
