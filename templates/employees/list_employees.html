@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Funcionários - {{ block.super }}{% endblock title %}
+
+{% block body %}
+<h1>Funcionários</h1>
+
+<form method="get" action="{% url 'employees:search_employees' %}">
+    <input type="text" name="query" placeholder="Buscar por sobrenome..." value="{{ query|default:'' }}">
+    <button type="submit">Buscar</button>
+</form>
+
+<p><a href="{% url 'employees:add_employee' %}">Novo Funcionário</a></p>
+
+<ul>
+{% for employee in employees %}
+    <li>
+        <h3>{{ employee.first_name }} {{ employee.last_name }}</h3>
+        <p>Cargo: {{ employee.position }} | Contratado em: {{ employee.hired_date }}</p>
+        <p>Telefone: {{ employee.phone }} | E-mail: {{ employee.email }}</p>
+        <p>Salário: R$ {{ employee.salary }} | Ativo: {{ employee.is_active|yesno:"Sim,Não" }}</p>
+        {% if employee.contract %}<p><a href="{{ employee.contract.url }}" target="_blank">Ver contrato</a></p>{% endif %}
+        <p>
+            <a href="{% url 'employees:edit_employee' employee.id %}">Editar</a>
+            <a href="{% url 'employees:delete_employee' employee.id %}" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+        </p>
+    </li>
+{% empty %}
+    <li>Nenhum funcionário cadastrado.</li>
+{% endfor %}
+</ul>
+{% endblock body %}
