@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block title %}Meu perfil - {{ block.super }}{% endblock title %}
+
+{% block body %}
+<h1>Olá, {{ user.username }}</h1>
+<p>Email: {{ user.email|default:'(não informado)' }}</p>
+<p><a href="{% url 'accounts:logout' %}">Sair</a></p>
+{% endblock body %}
