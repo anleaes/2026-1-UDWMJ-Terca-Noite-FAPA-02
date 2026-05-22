@@ -16,5 +16,7 @@ hotelapp/__pycache__/*
 /apps/employees/migrations/*
 /apps/properties/__pycache__/*
 /apps/properties/migrations/*
+/apps/room_types/__pycache__/*
+/apps/room_types/migrations/*
 /apps/amenities/__pycache__/*
 /apps/amenities/migrations/*
