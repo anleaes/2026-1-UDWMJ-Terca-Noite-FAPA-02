@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'guests.apps.GuestsConfig',
     'employees.apps.EmployeesConfig',
     'properties.apps.PropertiesConfig',
+    'amenities.apps.AmenitiesConfig',
 ]
 
 MIDDLEWARE = [
