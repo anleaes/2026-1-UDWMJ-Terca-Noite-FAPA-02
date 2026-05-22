@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Propriedades - {{ block.super }}{% endblock title %}
+{% block body %}
+<h1>Propriedades</h1>
+<form method="get" action="{% url 'properties:search_properties' %}">
+    <input type="text" name="query" placeholder="Buscar..." value="{{ query|default:'' }}">
+    <button type="submit">Buscar</button>
+</form>
+{% if user.is_authenticated %}
+    <a href="{% url 'properties:add_property' %}">Nova Propriedade</a>
+{% endif %}
+<ul>
+{% for property in properties %}
+    <li>
+        <h3>{{ property.name }} ({{ property.get_property_type_display }})</h3>
+        <p>{{ property.description }}</p>
+        <p>Endereço: {{ property.address }} | Avaliação: {{ property.rating }}</p>
+        {% if property.photo %}<img src="{{ property.photo.url }}" width="200">{% endif %}
+        {% if user.is_authenticated %}
+            <a href="{% url 'properties:edit_property' property.id %}">Editar</a>
+            <a href="{% url 'properties:delete_property' property.id %}" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+        {% endif %}
+    </li>
+{% empty %}
+    <li>Nenhuma propriedade cadastrada.</li>
+{% endfor %}
+</ul>
+{% endblock body %}
