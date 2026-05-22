@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'employees.apps.EmployeesConfig',
     'properties.apps.PropertiesConfig',
     'room_types.apps.RoomTypesConfig',
+    'amenities.apps.AmenitiesConfig',
 ]
 
 MIDDLEWARE = [
