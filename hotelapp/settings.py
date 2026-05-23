@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'reservations.apps.ReservationsConfig',
     'reservation_items.apps.ReservationItemsConfig',
     'invoices.apps.InvoicesConfig',
+    'reviews.apps.ReviewsConfig',
 ]
 
 MIDDLEWARE = [
