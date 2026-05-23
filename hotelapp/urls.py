@@ -34,6 +34,7 @@ urlpatterns = [
     path('reservations/', include('reservations.urls', namespace='reservations')),
     path('reservation_items/', include('reservation_items.urls', namespace='reservation_items')),
     path('invoices/', include('invoices.urls', namespace='invoices')),
+    path('reviews/', include('reviews.urls', namespace='reviews')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
