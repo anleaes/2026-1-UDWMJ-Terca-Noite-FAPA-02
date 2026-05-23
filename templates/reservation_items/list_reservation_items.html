@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Itens de Reserva - {{ block.super }}{% endblock title %}
+
+{% block body %}
+<h1>Itens de Reserva</h1>
+
+<form method="get" action="{% url 'reservation_items:search_reservation_items' %}">
+    <input type="text" name="query" placeholder="Buscar por serviço..." value="{{ query|default:'' }}">
+    <button type="submit">Buscar</button>
+</form>
+
+<p><a href="{% url 'reservation_items:add_reservation_item' %}">Novo Item</a></p>
+
+<ul>
+{% for item in items %}
+    <li>
+        <h3>{{ item.service.name }} x{{ item.quantity }}</h3>
+        <p>Reserva: #{{ item.reservation.id }} - {{ item.reservation.guest.first_name }} {{ item.reservation.guest.last_name }}</p>
+        <p>Preço unitário: R$ {{ item.unit_price }} | Subtotal: R$ {{ item.subtotal }}</p>
+        <p>Data do serviço: {{ item.service_date }}</p>
+        <p>
+            <a href="{% url 'reservation_items:edit_reservation_item' item.id %}">Editar</a>
+            <a href="{% url 'reservation_items:delete_reservation_item' item.id %}" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+        </p>
+    </li>
+{% empty %}
+    <li>Nenhum item cadastrado.</li>
+{% endfor %}
+</ul>
+{% endblock body %}
