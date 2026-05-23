@@ -33,6 +33,7 @@ urlpatterns = [
     path('rooms/', include('rooms.urls', namespace='rooms')),
     path('reservations/', include('reservations.urls', namespace='reservations')),
     path('reservation_items/', include('reservation_items.urls', namespace='reservation_items')),
+    path('invoices/', include('invoices.urls', namespace='invoices')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
