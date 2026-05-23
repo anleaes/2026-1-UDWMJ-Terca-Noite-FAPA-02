@@ -24,3 +24,5 @@ hotelapp/__pycache__/*
 /apps/rooms/migrations/*
 /apps/reservations/__pycache__/*
 /apps/reservations/migrations/*
+/apps/reservation_items/__pycache__/*
+/apps/reservation_items/migrations/*
