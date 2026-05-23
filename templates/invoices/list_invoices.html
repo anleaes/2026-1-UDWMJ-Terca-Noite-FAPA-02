@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Faturas - {{ block.super }}{% endblock title %}
+
+{% block body %}
+<h1>Faturas</h1>
+
+<form method="get" action="{% url 'invoices:list' %}">
+    <input type="text" name="q" placeholder="Buscar por número, reserva, hóspede ou quarto..." value="{{ request.GET.q|default:'' }}">
+    <input type="text" name="reservation" placeholder="Filtrar por reserva (ID)" value="{{ request.GET.reservation|default:'' }}">
+    <button type="submit">Buscar</button>
+</form>
+
+{% if user.is_authenticated %}
+    <a href="{% url 'invoices:add' %}">Nova Fatura</a>
+{% endif %}
+
+<ul>
+{% for invoice in invoices %}
+    <li>
+        <h3>{{ invoice.number }}</h3>
+        <p>Reserva: {{ invoice.reservation }}</p>
+        <p>Emissão: {{ invoice.issue_date }} | Valor: {{ invoice.amount }}</p>
+        {% if invoice.document_pdf %}
+            <p><a href="{{ invoice.document_pdf.url }}" target="_blank">Abrir PDF</a></p>
+        {% endif %}
+        {% if user.is_authenticated %}
+            <a href="{% url 'invoices:edit' invoice.id %}">Editar</a>
+            <a href="{% url 'invoices:delete' invoice.id %}" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+        {% endif %}
+    </li>
+{% empty %}
+    <li>Nenhuma fatura cadastrada.</li>
+{% endfor %}
+</ul>
+{% endblock body %}
