@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Avaliações - {{ block.super }}{% endblock title %}
+
+{% block body %}
+<h1>Avaliações</h1>
+
+<form method="get" action="{% url 'reviews:search_reviews' %}">
+    <input type="text" name="query" placeholder="Buscar por comentário..." value="{{ query|default:'' }}">
+    <button type="submit">Buscar</button>
+</form>
+
+{% if user.is_authenticated %}
+    <a href="{% url 'reviews:add_review' %}">Nova Avaliação</a>
+{% endif %}
+
+<ul>
+{% for review in reviews %}
+    <li>
+        <h3>Avaliação {{ review.rating }}/5</h3>
+        <p>Reserva: {{ review.reservation }}</p>
+        <p>{{ review.comment }}</p>
+        <p>Criada em: {{ review.created_at }}</p>
+        {% if review.photo %}
+            <img src="{{ review.photo.url }}" width="200">
+        {% endif %}
+        {% if user.is_authenticated %}
+            <a href="{% url 'reviews:edit_review' review.id %}">Editar</a>
+            <a href="{% url 'reviews:delete_review' review.id %}" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+        {% endif %}
+    </li>
+{% empty %}
+    <li>Nenhuma avaliação cadastrada.</li>
+{% endfor %}
+</ul>
+{% endblock body %}
