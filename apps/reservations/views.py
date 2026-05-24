@@ -1,7 +1,13 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+import uuid
 
-from .forms import ReservationForm
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
+
+from guests.models import Guest
+from invoices.models import Invoice
+from rooms.models import Room
+
+from .forms import ReservationBookingForm, ReservationForm
 from .models import Reservation
 
 
@@ -58,3 +64,41 @@ def search_reservations(request):
     )
     context = {'reservations': reservations, 'query': query}
     return render(request, template_name, context)
+
+
+@login_required(login_url='/accounts/login/')
+def book_room(request, id_room):
+    template_name = 'reservations/book_room.html'
+    room = get_object_or_404(Room, id=id_room)
+    try:
+        guest = request.user.guest_profile
+    except (Guest.DoesNotExist, AttributeError):
+        return redirect('guests:add_guest')
+    if request.method == 'POST':
+        form = ReservationBookingForm(request.POST)
+        if form.is_valid():
+            reservation = form.save(commit=False)
+            reservation.guest = guest
+            reservation.room = room
+            reservation.total = (reservation.check_out - reservation.check_in).days * room.daily_rate
+            reservation.save()
+            return redirect('reservations:list_reservations')
+    else:
+        form = ReservationBookingForm()
+    context = {'form': form, 'room': room}
+    return render(request, template_name, context)
+
+
+@login_required(login_url='/accounts/login/')
+def confirm_reservation(request, id_reservation):
+    reservation = get_object_or_404(Reservation, id=id_reservation)
+    reservation.status = 'CONFIRMED'
+    reservation.save()
+    Invoice.objects.get_or_create(
+        reservation=reservation,
+        defaults={
+            'number': f'INV-{uuid.uuid4().hex[:8].upper()}',
+            'amount': reservation.total,
+        },
+    )
+    return redirect('reservations:list_reservations')
