@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+
+from accounts.decorators import employee_required
 
 from .forms import AmenityForm
 from .models import Amenity
@@ -12,7 +13,7 @@ def list_amenities(request):
     return render(request, template_name, context)
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def add_amenity(request):
     template_name = 'amenities/add_amenity.html'
     context = {}
@@ -27,7 +28,7 @@ def add_amenity(request):
     return render(request, template_name, context)
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def edit_amenity(request, id_amenity):
     template_name = 'amenities/add_amenity.html'
     amenity = get_object_or_404(Amenity, id=id_amenity)
@@ -41,7 +42,7 @@ def edit_amenity(request, id_amenity):
     return render(request, template_name, {'form': form})
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def delete_amenity(request, id_amenity):
     amenity = get_object_or_404(Amenity, id=id_amenity)
     amenity.delete()

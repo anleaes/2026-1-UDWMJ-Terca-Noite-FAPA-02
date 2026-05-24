@@ -3,6 +3,7 @@ import uuid
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
+from accounts.decorators import employee_required
 from guests.models import Guest
 from invoices.models import Invoice
 from rooms.models import Room
@@ -11,7 +12,7 @@ from .forms import ReservationBookingForm, ReservationForm
 from .models import Reservation
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def list_reservations(request):
     template_name = 'reservations/list_reservations.html'
     reservations = Reservation.objects.select_related('guest', 'employee', 'room').all()
@@ -19,7 +20,7 @@ def list_reservations(request):
     return render(request, template_name, context)
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def add_reservation(request):
     template_name = 'reservations/add_reservation.html'
     context = {}
@@ -34,7 +35,7 @@ def add_reservation(request):
     return render(request, template_name, context)
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def edit_reservation(request, id_reservation):
     template_name = 'reservations/add_reservation.html'
     reservation = get_object_or_404(Reservation, id=id_reservation)
@@ -48,14 +49,14 @@ def edit_reservation(request, id_reservation):
     return render(request, template_name, {'form': form})
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def delete_reservation(request, id_reservation):
     reservation = get_object_or_404(Reservation, id=id_reservation)
     reservation.delete()
     return redirect('reservations:list_reservations')
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def search_reservations(request):
     template_name = 'reservations/list_reservations.html'
     query = request.GET.get('query', '')
@@ -89,7 +90,7 @@ def book_room(request, id_room):
     return render(request, template_name, context)
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def confirm_reservation(request, id_reservation):
     reservation = get_object_or_404(Reservation, id=id_reservation)
     reservation.status = 'CONFIRMED'

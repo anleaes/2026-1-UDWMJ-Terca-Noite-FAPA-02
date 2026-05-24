@@ -1,12 +1,13 @@
-from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
+
+from accounts.decorators import employee_required
 
 from .forms import InvoiceForm
 from .models import Invoice
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def list_invoices(request):
     template_name = 'invoices/list_invoices.html'
     invoices = Invoice.objects.select_related('reservation', 'reservation__guest', 'reservation__room').all()
@@ -14,7 +15,7 @@ def list_invoices(request):
     return render(request, template_name, context)
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def add_invoice(request):
     template_name = 'invoices/add_invoice.html'
     context = {}
@@ -29,7 +30,7 @@ def add_invoice(request):
     return render(request, template_name, context)
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def edit_invoice(request, id_invoice):
     template_name = 'invoices/add_invoice.html'
     invoice = get_object_or_404(Invoice, id=id_invoice)
@@ -43,14 +44,14 @@ def edit_invoice(request, id_invoice):
     return render(request, template_name, {'form': form})
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def delete_invoice(request, id_invoice):
     invoice = get_object_or_404(Invoice, id=id_invoice)
     invoice.delete()
     return redirect('invoices:list_invoices')
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def search_invoices(request):
     template_name = 'invoices/list_invoices.html'
     query = request.GET.get('query', '')
