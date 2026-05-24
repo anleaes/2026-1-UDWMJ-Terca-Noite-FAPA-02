@@ -1,53 +1,64 @@
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.urls import reverse_lazy
-from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import InvoiceForm
 from .models import Invoice
 
 
-class InvoiceListView(ListView):
-	model = Invoice
-	template_name = 'invoices/list_invoices.html'
-	context_object_name = 'invoices'
-
-	def get_queryset(self):
-		queryset = super().get_queryset().select_related('reservation', 'reservation__guest', 'reservation__room')
-		query = self.request.GET.get('q')
-
-		if query:
-			queryset = queryset.filter(
-				Q(number__icontains=query)
-				| Q(reservation__id__icontains=query)
-				| Q(reservation__guest__first_name__icontains=query)
-				| Q(reservation__guest__last_name__icontains=query)
-				| Q(reservation__room__number__icontains=query)
-			)
-
-		reservation_id = self.request.GET.get('reservation')
-		if reservation_id:
-			queryset = queryset.filter(reservation__id=reservation_id)
-
-		return queryset
+@login_required(login_url='/accounts/login/')
+def list_invoices(request):
+    template_name = 'invoices/list_invoices.html'
+    invoices = Invoice.objects.select_related('reservation', 'reservation__guest', 'reservation__room').all()
+    context = {'invoices': invoices}
+    return render(request, template_name, context)
 
 
-class InvoiceCreateView(CreateView):
-	model = Invoice
-	form_class = InvoiceForm
-	template_name = 'invoices/add_invoice.html'
-	success_url = reverse_lazy('invoices:list')
+@login_required(login_url='/accounts/login/')
+def add_invoice(request):
+    template_name = 'invoices/add_invoice.html'
+    context = {}
+    if request.method == 'POST':
+        form = InvoiceForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('invoices:list_invoices')
+    else:
+        form = InvoiceForm()
+    context['form'] = form
+    return render(request, template_name, context)
 
 
-class InvoiceUpdateView(UpdateView):
-	model = Invoice
-	form_class = InvoiceForm
-	template_name = 'invoices/add_invoice.html'
-	success_url = reverse_lazy('invoices:list')
+@login_required(login_url='/accounts/login/')
+def edit_invoice(request, id_invoice):
+    template_name = 'invoices/add_invoice.html'
+    invoice = get_object_or_404(Invoice, id=id_invoice)
+    if request.method == 'POST':
+        form = InvoiceForm(request.POST, request.FILES, instance=invoice)
+        if form.is_valid():
+            form.save()
+            return redirect('invoices:list_invoices')
+    else:
+        form = InvoiceForm(instance=invoice)
+    return render(request, template_name, {'form': form})
 
 
-class InvoiceDeleteView(DeleteView):
-	model = Invoice
-	template_name = 'invoices/delete_invoice.html'
-	success_url = reverse_lazy('invoices:list')
+@login_required(login_url='/accounts/login/')
+def delete_invoice(request, id_invoice):
+    invoice = get_object_or_404(Invoice, id=id_invoice)
+    invoice.delete()
+    return redirect('invoices:list_invoices')
 
-# Create your views here.
+
+@login_required(login_url='/accounts/login/')
+def search_invoices(request):
+    template_name = 'invoices/list_invoices.html'
+    query = request.GET.get('query', '')
+    invoices = Invoice.objects.select_related('reservation', 'reservation__guest', 'reservation__room').filter(
+        Q(number__icontains=query)
+        | Q(reservation__guest__first_name__icontains=query)
+        | Q(reservation__guest__last_name__icontains=query)
+        | Q(reservation__room__number__icontains=query)
+    )
+    context = {'invoices': invoices, 'query': query}
+    return render(request, template_name, context)
