@@ -5,8 +5,9 @@ from . import views
 app_name = 'service_categories'
 
 urlpatterns = [
-    path('listar/', views.ServiceCategoryListView.as_view(), name='list'),
-    path('adicionar/', views.ServiceCategoryCreateView.as_view(), name='add'),
-    path('editar/<int:pk>/', views.ServiceCategoryUpdateView.as_view(), name='edit'),
-    path('excluir/<int:pk>/', views.ServiceCategoryDeleteView.as_view(), name='delete'),
+    path('listar/', views.list_service_categories, name='list_service_categories'),
+    path('adicionar/', views.add_service_category, name='add_service_category'),
+    path('editar/<int:id_category>/', views.edit_service_category, name='edit_service_category'),
+    path('excluir/<int:id_category>/', views.delete_service_category, name='delete_service_category'),
+    path('buscar/', views.search_service_categories, name='search_service_categories'),
 ]
