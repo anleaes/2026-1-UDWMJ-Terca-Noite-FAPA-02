@@ -1,11 +1,23 @@
 {% extends 'base.html' %}
 
-{% block title %}
-    {{ block.super }}
-{% endblock title %}
+{% block title %}{{ block.super }} - Início{% endblock title %}
 
 {% block body %}
-
 <h1>Bem-vindo ao HotelApp</h1>
+<p>Encontre o lugar perfeito para sua estadia.</p>
 
+<h2>Propriedades em destaque</h2>
+<ul>
+{% for property in featured_properties %}
+    <li>
+        <h3>{{ property.name }} ({{ property.get_property_type_display }})</h3>
+        <p>{{ property.description|truncatewords:30 }}</p>
+        <p>Endereço: {{ property.address }} | Avaliação: {{ property.rating }}</p>
+        {% if property.photo %}<img src="{{ property.photo.url }}" width="240">{% endif %}
+        <p><a href="{% url 'properties:list_properties' %}">Ver todas</a></p>
+    </li>
+{% empty %}
+    <li>Nenhuma propriedade disponível no momento.</li>
+{% endfor %}
+</ul>
 {% endblock body %}
