@@ -5,29 +5,26 @@
 {% block body %}
 <h1>Faturas</h1>
 
-<form method="get" action="{% url 'invoices:list' %}">
-    <input type="text" name="q" placeholder="Buscar por número, reserva, hóspede ou quarto..." value="{{ request.GET.q|default:'' }}">
-    <input type="text" name="reservation" placeholder="Filtrar por reserva (ID)" value="{{ request.GET.reservation|default:'' }}">
+<form method="get" action="{% url 'invoices:search_invoices' %}">
+    <input type="text" name="query" placeholder="Buscar por número, hóspede ou quarto..." value="{{ query|default:'' }}">
     <button type="submit">Buscar</button>
 </form>
 
-{% if user.is_authenticated %}
-    <a href="{% url 'invoices:add' %}">Nova Fatura</a>
-{% endif %}
+<p><a href="{% url 'invoices:add_invoice' %}">Nova Fatura</a></p>
 
 <ul>
 {% for invoice in invoices %}
     <li>
         <h3>{{ invoice.number }}</h3>
         <p>Reserva: {{ invoice.reservation }}</p>
-        <p>Emissão: {{ invoice.issue_date }} | Valor: {{ invoice.amount }}</p>
+        <p>Emissão: {{ invoice.issue_date }} | Valor: R$ {{ invoice.amount }}</p>
         {% if invoice.document_pdf %}
             <p><a href="{{ invoice.document_pdf.url }}" target="_blank">Abrir PDF</a></p>
         {% endif %}
-        {% if user.is_authenticated %}
-            <a href="{% url 'invoices:edit' invoice.id %}">Editar</a>
-            <a href="{% url 'invoices:delete' invoice.id %}" onclick="return confirm('Confirma exclusão?')">Excluir</a>
-        {% endif %}
+        <p>
+            <a href="{% url 'invoices:edit_invoice' invoice.id %}">Editar</a>
+            <a href="{% url 'invoices:delete_invoice' invoice.id %}" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+        </p>
     </li>
 {% empty %}
     <li>Nenhuma fatura cadastrada.</li>
