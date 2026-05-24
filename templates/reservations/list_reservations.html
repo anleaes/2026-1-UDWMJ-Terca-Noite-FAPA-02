@@ -24,6 +24,9 @@
         {% if reservation.employee %}<p>Atendente: {{ reservation.employee.first_name }} {{ reservation.employee.last_name }}</p>{% endif %}
         {% if reservation.notes %}<p>Observações: {{ reservation.notes }}</p>{% endif %}
         <p>
+            {% if reservation.status == 'PENDING' %}
+                <a href="{% url 'reservations:confirm_reservation' reservation.id %}">Confirmar</a>
+            {% endif %}
             <a href="{% url 'reservations:edit_reservation' reservation.id %}">Editar</a>
             <a href="{% url 'reservations:delete_reservation' reservation.id %}" onclick="return confirm('Confirma exclusão?')">Excluir</a>
         </p>
