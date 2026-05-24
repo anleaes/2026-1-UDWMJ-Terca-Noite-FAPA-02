@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Categorias de Serviço - {{ block.super }}{% endblock title %}
+
+{% block body %}
+<h1>Categorias de Serviço</h1>
+
+<form method="get" action="{% url 'service_categories:search_service_categories' %}">
+    <input type="text" name="query" placeholder="Buscar..." value="{{ query|default:'' }}">
+    <button type="submit">Buscar</button>
+</form>
+
+{% if user.is_authenticated %}
+    <a href="{% url 'service_categories:add_service_category' %}">Nova Categoria</a>
+{% endif %}
+
+<ul>
+{% for category in categories %}
+    <li>
+        <h3>{{ category.name }}</h3>
+        <p>{{ category.description }}</p>
+        <p>Ativa: {{ category.is_active|yesno:"Sim,Não" }}</p>
+        {% if category.icon %}<img src="{{ category.icon.url }}" width="50">{% endif %}
+        {% if user.is_authenticated %}
+            <a href="{% url 'service_categories:edit_service_category' category.id %}">Editar</a>
+            <a href="{% url 'service_categories:delete_service_category' category.id %}" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+        {% endif %}
+    </li>
+{% empty %}
+    <li>Nenhuma categoria cadastrada.</li>
+{% endfor %}
+</ul>
+{% endblock body %}
