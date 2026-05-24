@@ -1,10 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+
+from accounts.decorators import employee_required
+
 from .forms import GuestForm
 from .models import Guest
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def list_guests(request):
     template_name = 'guests/list_guests.html'
     guests = Guest.objects.all()
@@ -23,14 +26,16 @@ def add_guest(request):
             if not request.user.is_staff:
                 guest.user = request.user
             guest.save()
-            return redirect('guests:list_guests')
+            if hasattr(request.user, 'employee_profile'):
+                return redirect('guests:list_guests')
+            return redirect('core:home')
     else:
         form = GuestForm()
     context['form'] = form
     return render(request, template_name, context)
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def edit_guest(request, id_guest):
     template_name = 'guests/add_guest.html'
     guest = get_object_or_404(Guest, id=id_guest)
@@ -44,14 +49,14 @@ def edit_guest(request, id_guest):
     return render(request, template_name, {'form': form})
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def delete_guest(request, id_guest):
     guest = get_object_or_404(Guest, id=id_guest)
     guest.delete()
     return redirect('guests:list_guests')
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def search_guests(request):
     template_name = 'guests/list_guests.html'
     query = request.GET.get('query', '')

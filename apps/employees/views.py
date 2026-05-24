@@ -1,10 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+
+from accounts.decorators import employee_required
+
 from .forms import EmployeeForm
 from .models import Employee
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def list_employees(request):
     template_name = 'employees/list_employees.html'
     employees = Employee.objects.all()
@@ -12,7 +14,7 @@ def list_employees(request):
     return render(request, template_name, context)
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def add_employee(request):
     template_name = 'employees/add_employee.html'
     context = {}
@@ -27,7 +29,7 @@ def add_employee(request):
     return render(request, template_name, context)
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def edit_employee(request, id_employee):
     template_name = 'employees/add_employee.html'
     employee = get_object_or_404(Employee, id=id_employee)
@@ -41,14 +43,14 @@ def edit_employee(request, id_employee):
     return render(request, template_name, {'form': form})
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def delete_employee(request, id_employee):
     employee = get_object_or_404(Employee, id=id_employee)
     employee.delete()
     return redirect('employees:list_employees')
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def search_employees(request):
     template_name = 'employees/list_employees.html'
     query = request.GET.get('query', '')

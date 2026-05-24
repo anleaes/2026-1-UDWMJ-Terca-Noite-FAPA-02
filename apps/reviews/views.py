@@ -1,6 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
+from accounts.decorators import employee_required
+
 from .forms import ReviewForm
 from .models import Review
 
@@ -27,7 +29,7 @@ def add_review(request):
 	return render(request, template_name, context)
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def edit_review(request, id_review):
 	template_name = 'reviews/add_review.html'
 	review = get_object_or_404(Review, id=id_review)
@@ -41,7 +43,7 @@ def edit_review(request, id_review):
 	return render(request, template_name, {'form': form})
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def delete_review(request, id_review):
 	review = get_object_or_404(Review, id=id_review)
 	review.delete()

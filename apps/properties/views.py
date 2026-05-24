@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+
+from accounts.decorators import employee_required
 
 from .forms import PropertyForm
 from .models import Property
@@ -12,7 +13,7 @@ def list_properties(request):
     return render(request, template_name, context)
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def add_property(request):
     template_name = 'properties/add_property.html'
     context = {}
@@ -27,7 +28,7 @@ def add_property(request):
     return render(request, template_name, context)
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def edit_property(request, id_property):
     template_name = 'properties/add_property.html'
     property = get_object_or_404(Property, id=id_property)
@@ -41,7 +42,7 @@ def edit_property(request, id_property):
     return render(request, template_name, {'form': form})
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def delete_property(request, id_property):
     property = get_object_or_404(Property, id=id_property)
     property.delete()

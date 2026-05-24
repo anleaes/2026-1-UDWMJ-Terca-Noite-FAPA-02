@@ -1,6 +1,7 @@
-from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
+
+from accounts.decorators import employee_required
 
 from .forms import ServiceForm
 from .models import Service
@@ -13,7 +14,7 @@ def list_services(request):
     return render(request, template_name, context)
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def add_service(request):
     template_name = 'services/add_service.html'
     context = {}
@@ -28,7 +29,7 @@ def add_service(request):
     return render(request, template_name, context)
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def edit_service(request, id_service):
     template_name = 'services/add_service.html'
     service = get_object_or_404(Service, id=id_service)
@@ -42,7 +43,7 @@ def edit_service(request, id_service):
     return render(request, template_name, {'form': form})
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def delete_service(request, id_service):
     service = get_object_or_404(Service, id=id_service)
     service.delete()

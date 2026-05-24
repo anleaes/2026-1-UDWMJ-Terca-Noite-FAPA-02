@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+
+from accounts.decorators import employee_required
 
 from .forms import RoomTypeForm
 from .models import RoomType
@@ -12,7 +13,7 @@ def list_room_types(request):
     return render(request, template_name, context)
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def add_room_type(request):
     template_name = 'room_types/add_room_type.html'
     context = {}
@@ -27,7 +28,7 @@ def add_room_type(request):
     return render(request, template_name, context)
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def edit_room_type(request, id_room_type):
     template_name = 'room_types/add_room_type.html'
     room_type = get_object_or_404(RoomType, id=id_room_type)
@@ -41,7 +42,7 @@ def edit_room_type(request, id_room_type):
     return render(request, template_name, {'form': form})
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def delete_room_type(request, id_room_type):
     room_type = get_object_or_404(RoomType, id=id_room_type)
     room_type.delete()

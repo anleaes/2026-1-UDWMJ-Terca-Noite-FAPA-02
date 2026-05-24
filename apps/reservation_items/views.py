@@ -1,11 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+
+from accounts.decorators import employee_required
 
 from .forms import ReservationItemForm
 from .models import ReservationItem
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def list_reservation_items(request):
     template_name = 'reservation_items/list_reservation_items.html'
     items = ReservationItem.objects.select_related('reservation', 'service').all()
@@ -13,7 +14,7 @@ def list_reservation_items(request):
     return render(request, template_name, context)
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def add_reservation_item(request):
     template_name = 'reservation_items/add_reservation_item.html'
     context = {}
@@ -28,7 +29,7 @@ def add_reservation_item(request):
     return render(request, template_name, context)
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def edit_reservation_item(request, id_item):
     template_name = 'reservation_items/add_reservation_item.html'
     item = get_object_or_404(ReservationItem, id=id_item)
@@ -42,14 +43,14 @@ def edit_reservation_item(request, id_item):
     return render(request, template_name, {'form': form})
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def delete_reservation_item(request, id_item):
     item = get_object_or_404(ReservationItem, id=id_item)
     item.delete()
     return redirect('reservation_items:list_reservation_items')
 
 
-@login_required(login_url='/accounts/login/')
+@employee_required
 def search_reservation_items(request):
     template_name = 'reservation_items/list_reservation_items.html'
     query = request.GET.get('query', '')
