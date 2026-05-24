@@ -1,15 +1,13 @@
 {% extends 'base.html' %}
 
-{% block title %}
-    {{ block.super }} | Serviço
-{% endblock title %}
+{% block title %}Serviço - {{ block.super }}{% endblock title %}
 
 {% block body %}
 <h1>Serviço</h1>
-
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Salvar</button>
+    <a href="{% url 'services:list_services' %}">Cancelar</a>
 </form>
 {% endblock body %}
