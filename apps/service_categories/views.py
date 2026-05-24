@@ -1,52 +1,59 @@
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.urls import reverse_lazy
-from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import ServiceCategoryForm
 from .models import ServiceCategory
 
 
-class ServiceCategoryListView(ListView):
-	model = ServiceCategory
-	template_name = 'service_categories/list_service_categories.html'
-	context_object_name = 'service_categories'
-
-	def get_queryset(self):
-		queryset = super().get_queryset()
-		query = self.request.GET.get('q')
-
-		if query:
-			queryset = queryset.filter(
-				Q(name__icontains=query)
-				| Q(description__icontains=query)
-			)
-
-		active = self.request.GET.get('active')
-		if active == '1':
-			queryset = queryset.filter(is_active=True)
-		elif active == '0':
-			queryset = queryset.filter(is_active=False)
-
-		return queryset
+def list_service_categories(request):
+    template_name = 'service_categories/list_service_categories.html'
+    categories = ServiceCategory.objects.filter(is_active=True)
+    context = {'categories': categories}
+    return render(request, template_name, context)
 
 
-class ServiceCategoryCreateView(CreateView):
-	model = ServiceCategory
-	form_class = ServiceCategoryForm
-	template_name = 'service_categories/add_service_category.html'
-	success_url = reverse_lazy('service_categories:list')
+@login_required(login_url='/accounts/login/')
+def add_service_category(request):
+    template_name = 'service_categories/add_service_category.html'
+    context = {}
+    if request.method == 'POST':
+        form = ServiceCategoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('service_categories:list_service_categories')
+    else:
+        form = ServiceCategoryForm()
+    context['form'] = form
+    return render(request, template_name, context)
 
 
-class ServiceCategoryUpdateView(UpdateView):
-	model = ServiceCategory
-	form_class = ServiceCategoryForm
-	template_name = 'service_categories/add_service_category.html'
-	success_url = reverse_lazy('service_categories:list')
+@login_required(login_url='/accounts/login/')
+def edit_service_category(request, id_category):
+    template_name = 'service_categories/add_service_category.html'
+    category = get_object_or_404(ServiceCategory, id=id_category)
+    if request.method == 'POST':
+        form = ServiceCategoryForm(request.POST, request.FILES, instance=category)
+        if form.is_valid():
+            form.save()
+            return redirect('service_categories:list_service_categories')
+    else:
+        form = ServiceCategoryForm(instance=category)
+    return render(request, template_name, {'form': form})
 
 
-class ServiceCategoryDeleteView(DeleteView):
-	model = ServiceCategory
-	template_name = 'service_categories/delete_service_category.html'
-	success_url = reverse_lazy('service_categories:list')
+@login_required(login_url='/accounts/login/')
+def delete_service_category(request, id_category):
+    category = get_object_or_404(ServiceCategory, id=id_category)
+    category.delete()
+    return redirect('service_categories:list_service_categories')
 
-# Create your views here.
+
+def search_service_categories(request):
+    template_name = 'service_categories/list_service_categories.html'
+    query = request.GET.get('query', '')
+    categories = ServiceCategory.objects.filter(
+        Q(name__icontains=query) | Q(description__icontains=query)
+    )
+    context = {'categories': categories, 'query': query}
+    return render(request, template_name, context)
