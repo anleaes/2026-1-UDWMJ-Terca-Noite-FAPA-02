@@ -3,36 +3,40 @@
 {% block title %}Reservas - {{ block.super }}{% endblock title %}
 
 {% block body %}
-<h1>Reservas</h1>
+<h1 class="page-title">Reservas</h1>
 
-<form method="get" action="{% url 'reservations:search_reservations' %}">
-    <input type="text" name="query" placeholder="Buscar por sobrenome do hóspede..." value="{{ query|default:'' }}">
-    <button type="submit">Buscar</button>
-</form>
+<div class="toolbar">
+    <form method="get" action="{% url 'reservations:search_reservations' %}">
+        <input type="text" name="query" placeholder="Buscar por sobrenome do hóspede..." value="{{ query|default:'' }}">
+        <button type="submit" class="btn btn--secondary">Buscar</button>
+    </form>
+    <a href="{% url 'reservations:add_reservation' %}" class="btn btn--primary">Nova Reserva</a>
+</div>
 
-<p><a href="{% url 'reservations:add_reservation' %}">Nova Reserva</a></p>
-
-<ul>
+<ul class="card-grid">
 {% for reservation in reservations %}
-    <li>
-        <h3>Reserva #{{ reservation.id }} - {{ reservation.get_status_display }}</h3>
-        <p>Hóspede: {{ reservation.guest.first_name }} {{ reservation.guest.last_name }}</p>
-        <p>Quarto: {{ reservation.room.property.name }} - Nº {{ reservation.room.number }}</p>
-        <p>Check-in: {{ reservation.check_in }} | Check-out: {{ reservation.check_out }}</p>
-        <p>Hóspedes: {{ reservation.guests_count }} | Pagamento: {{ reservation.get_payment_method_display }}</p>
-        <p>Total: R$ {{ reservation.total }}</p>
-        {% if reservation.employee %}<p>Atendente: {{ reservation.employee.first_name }} {{ reservation.employee.last_name }}</p>{% endif %}
-        {% if reservation.notes %}<p>Observações: {{ reservation.notes }}</p>{% endif %}
-        <p>
-            {% if reservation.status == 'PENDING' %}
-                <a href="{% url 'reservations:confirm_reservation' reservation.id %}">Confirmar</a>
-            {% endif %}
-            <a href="{% url 'reservations:edit_reservation' reservation.id %}">Editar</a>
-            <a href="{% url 'reservations:delete_reservation' reservation.id %}" onclick="return confirm('Confirma exclusão?')">Excluir</a>
-        </p>
+    <li class="card">
+        <div class="card-body">
+            <h3 class="card-title">
+                Reserva #{{ reservation.id }}
+                <span class="badge badge--{{ reservation.status|lower }}">{{ reservation.get_status_display }}</span>
+            </h3>
+            <p class="card-meta">Hóspede: {{ reservation.guest.first_name }} {{ reservation.guest.last_name }}</p>
+            <p class="card-meta">Quarto: {{ reservation.room.property.name }} - Nº {{ reservation.room.number }}</p>
+            <p class="card-meta">{{ reservation.check_in }} → {{ reservation.check_out }} · {{ reservation.guests_count }} hóspede(s)</p>
+            <p class="card-meta">Pagamento: {{ reservation.get_payment_method_display }} · Total: R$ {{ reservation.total }}</p>
+            {% if reservation.notes %}<p class="card-description">{{ reservation.notes }}</p>{% endif %}
+            <div class="card-actions">
+                {% if reservation.status == 'PENDING' %}
+                    <a href="{% url 'reservations:confirm_reservation' reservation.id %}" class="btn btn--primary btn--sm">Confirmar</a>
+                {% endif %}
+                <a href="{% url 'reservations:edit_reservation' reservation.id %}" class="btn btn--secondary btn--sm">Editar</a>
+                <a href="{% url 'reservations:delete_reservation' reservation.id %}" class="btn btn--danger btn--sm" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+            </div>
+        </div>
     </li>
 {% empty %}
-    <li>Nenhuma reserva cadastrada.</li>
+    <li class="empty-state">Nenhuma reserva cadastrada.</li>
 {% endfor %}
 </ul>
 {% endblock body %}
