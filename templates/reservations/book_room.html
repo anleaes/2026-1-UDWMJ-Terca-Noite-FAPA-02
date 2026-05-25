@@ -3,17 +3,23 @@
 {% block title %}Reservar Quarto - {{ block.super }}{% endblock title %}
 
 {% block body %}
-<h1>Reservar Quarto</h1>
+<h1 class="page-title">Reservar Quarto</h1>
 
-<h2>{{ room.property.name }} - Quarto {{ room.number }}</h2>
-<p>Tipo: {{ room.room_type.name }} | Diária: R$ {{ room.daily_rate }}</p>
-<p>{{ room.description }}</p>
-{% if room.photo %}<img src="{{ room.photo.url }}" width="240">{% endif %}
+<div class="card" style="margin-bottom: var(--space-xl);">
+    {% if room.photo %}<img src="{{ room.photo.url }}" class="card-image" alt="Quarto">{% endif %}
+    <div class="card-body">
+        <h3 class="card-title">{{ room.property.name }} - Quarto {{ room.number }}</h3>
+        <p class="card-meta">{{ room.room_type.name }} · Diária: R$ {{ room.daily_rate }}</p>
+        <p class="card-description">{{ room.description }}</p>
+    </div>
+</div>
 
-<form method="post">
+<form method="post" class="form">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Reservar</button>
-    <a href="{% url 'rooms:list_rooms' %}">Cancelar</a>
+    <div class="form-actions">
+        <button type="submit" class="btn btn--primary">Reservar</button>
+        <a href="{% url 'rooms:list_rooms' %}" class="btn btn--secondary">Cancelar</a>
+    </div>
 </form>
 {% endblock body %}
