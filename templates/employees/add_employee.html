@@ -3,11 +3,16 @@
 {% block title %}Funcionário - {{ block.super }}{% endblock title %}
 
 {% block body %}
-<h1>Funcionário</h1>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Salvar</button>
-    <a href="{% url 'employees:list_employees' %}">Cancelar</a>
-</form>
+<section class="section">
+    <h1 class="page-title">Funcionário</h1>
+
+    <form method="post" enctype="multipart/form-data" class="form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="form-actions">
+            <button type="submit" class="btn btn--primary">Salvar</button>
+            <a href="{% url 'employees:list_employees' %}" class="btn btn--secondary">Cancelar</a>
+        </div>
+    </form>
+</section>
 {% endblock body %}
