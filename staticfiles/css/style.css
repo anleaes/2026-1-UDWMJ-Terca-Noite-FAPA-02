@@ -299,6 +299,17 @@ img { max-width: 100%; height: auto; display: block; }
     border-radius: var(--radius);
     padding: var(--space-xl);
 }
+.form-field {
+    margin-bottom: var(--space-md);
+}
+.form-label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: var(--space-xs);
+}
+.form-input {
+    width: 100%;
+}
 .form p { margin-bottom: var(--space-md); }
 .form label {
     display: block;
@@ -334,6 +345,11 @@ img { max-width: 100%; height: auto; display: block; }
     gap: var(--space-sm);
     margin-top: var(--space-lg);
     flex-wrap: wrap;
+}
+.form-error {
+    margin-top: var(--space-xs);
+    color: var(--color-danger);
+    font-size: 0.9rem;
 }
 
 .alert {
