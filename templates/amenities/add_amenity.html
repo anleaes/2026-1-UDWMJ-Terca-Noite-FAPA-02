@@ -1,11 +1,16 @@
 {% extends 'base.html' %}
+
 {% block title %}Comodidade - {{ block.super }}{% endblock title %}
+
 {% block body %}
-<h1>Comodidade</h1>
-<form method="post" enctype="multipart/form-data">
+<h1 class="page-title">Comodidade</h1>
+
+<form method="post" enctype="multipart/form-data" class="form">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Salvar</button>
-    <a href="{% url 'amenities:list_amenities' %}">Cancelar</a>
+    <div class="form-actions">
+        <button type="submit" class="btn btn--primary">Salvar</button>
+        <a href="{% url 'amenities:list_amenities' %}" class="btn btn--secondary">Cancelar</a>
+    </div>
 </form>
 {% endblock body %}
