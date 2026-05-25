@@ -1,32 +1,44 @@
 {% extends 'base.html' %}
+
 {% block title %}Quartos - {{ block.super }}{% endblock title %}
+
 {% block body %}
-<h1>Quartos</h1>
-<form method="get" action="{% url 'rooms:search_rooms' %}">
-    <input type="text" name="query" placeholder="Buscar por número..." value="{{ query|default:'' }}">
-    <button type="submit">Buscar</button>
-</form>
-{% if user.is_authenticated %}
-    <a href="{% url 'rooms:add_room' %}">Novo Quarto</a>
-{% endif %}
-<ul>
+<h1 class="page-title">Quartos</h1>
+
+<div class="toolbar">
+    <form method="get" action="{% url 'rooms:search_rooms' %}">
+        <input type="text" name="query" placeholder="Buscar por número..." value="{{ query|default:'' }}">
+        <button type="submit" class="btn btn--secondary">Buscar</button>
+    </form>
+    {% if user.is_authenticated %}
+        <a href="{% url 'rooms:add_room' %}" class="btn btn--primary">Novo Quarto</a>
+    {% endif %}
+</div>
+
+<ul class="card-grid">
 {% for room in rooms %}
-    <li>
-        <h3>{{ room.property.name }} - Quarto {{ room.number }}</h3>
-        <p>Tipo: {{ room.room_type.name }} | Andar: {{ room.floor }} | Diária: {{ room.daily_rate }}</p>
-        <p>Status: {{ room.get_status_display }}</p>
-        <p>{{ room.description }}</p>
-        {% if room.photo %}<img src="{{ room.photo.url }}" width="200">{% endif %}
-        {% if user.is_authenticated and room.status == 'AVAILABLE' %}
-            <a href="{% url 'reservations:book_room' room.id %}">Reservar</a>
+    <li class="card">
+        {% if room.photo %}
+            <img src="{{ room.photo.url }}" class="card-image" alt="{{ room }}">
         {% endif %}
-        {% if user.is_authenticated %}
-            <a href="{% url 'rooms:edit_room' room.id %}">Editar</a>
-            <a href="{% url 'rooms:delete_room' room.id %}" onclick="return confirm('Confirma exclusão?')">Excluir</a>
-        {% endif %}
+        <div class="card-body">
+            <h3 class="card-title">{{ room.property.name }} - Quarto {{ room.number }}</h3>
+            <p class="card-meta">Tipo: {{ room.room_type.name }} · Andar: {{ room.floor }} · Diária: R$ {{ room.daily_rate }}</p>
+            <p class="card-meta">Status: {{ room.get_status_display }}</p>
+            <p class="card-description">{{ room.description }}</p>
+            {% if user.is_authenticated %}
+                <div class="card-actions">
+                    {% if room.status == 'AVAILABLE' %}
+                        <a href="{% url 'reservations:book_room' room.id %}" class="btn btn--primary btn--sm">Reservar</a>
+                    {% endif %}
+                    <a href="{% url 'rooms:edit_room' room.id %}" class="btn btn--secondary btn--sm">Editar</a>
+                    <a href="{% url 'rooms:delete_room' room.id %}" class="btn btn--danger btn--sm" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+                </div>
+            {% endif %}
+        </div>
     </li>
 {% empty %}
-    <li>Nenhum quarto cadastrado.</li>
+    <li class="empty-state">Nenhum quarto cadastrado.</li>
 {% endfor %}
 </ul>
 {% endblock body %}
