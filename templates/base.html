@@ -6,37 +6,55 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <title>{% block title %}HotelApp{% endblock title %}</title>
 </head>
 <body>
 
-    <nav>
-        <a href="{% url 'core:home' %}">Início</a>
-        <a href="{% url 'properties:list_properties' %}">Propriedades</a>
-        <a href="{% url 'rooms:list_rooms' %}">Quartos</a>
-        <a href="{% url 'services:list_services' %}">Serviços</a>
-        <a href="{% url 'reviews:list_reviews' %}">Avaliações</a>
-        {% if user.is_authenticated %}
-            | <a href="{% url 'reservations:list_reservations' %}">Reservas</a>
-            <a href="{% url 'invoices:list_invoices' %}">Faturas</a>
-            <a href="{% url 'guests:list_guests' %}">Hóspedes</a>
-            <a href="{% url 'employees:list_employees' %}">Funcionários</a>
-            <a href="{% url 'amenities:list_amenities' %}">Comodidades</a>
-            <a href="{% url 'room_types:list_room_types' %}">Tipos de Quarto</a>
-            <a href="{% url 'service_categories:list_service_categories' %}">Categorias</a>
-            <a href="{% url 'reservation_items:list_reservation_items' %}">Itens de Reserva</a>
-            | <a href="{% url 'accounts:profile' %}">{{ user.username }}</a>
-            <a href="{% url 'accounts:logout' %}">Sair</a>
-        {% else %}
-            | <a href="{% url 'accounts:login' %}">Login</a>
-            <a href="{% url 'accounts:register' %}">Cadastrar</a>
-        {% endif %}
+    <nav class="nav-main">
+        <div class="container nav-container">
+            <a href="{% url 'core:home' %}" class="nav-brand">HotelApp</a>
+            <details class="nav-mobile-toggle">
+                <summary>☰</summary>
+                <div class="nav-links">
+                    <a href="{% url 'core:home' %}" class="nav-link">Início</a>
+                    <a href="{% url 'properties:list_properties' %}" class="nav-link">Propriedades</a>
+                    <a href="{% url 'rooms:list_rooms' %}" class="nav-link">Quartos</a>
+                    <a href="{% url 'services:list_services' %}" class="nav-link">Serviços</a>
+                    <a href="{% url 'reviews:list_reviews' %}" class="nav-link">Avaliações</a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'reservations:list_reservations' %}" class="nav-link">Reservas</a>
+                        <a href="{% url 'invoices:list_invoices' %}" class="nav-link">Faturas</a>
+                        <a href="{% url 'guests:list_guests' %}" class="nav-link">Hóspedes</a>
+                        <a href="{% url 'employees:list_employees' %}" class="nav-link">Funcionários</a>
+                        <a href="{% url 'amenities:list_amenities' %}" class="nav-link">Comodidades</a>
+                        <a href="{% url 'room_types:list_room_types' %}" class="nav-link">Tipos de Quarto</a>
+                        <a href="{% url 'service_categories:list_service_categories' %}" class="nav-link">Categorias</a>
+                        <a href="{% url 'reservation_items:list_reservation_items' %}" class="nav-link">Itens</a>
+                        <a href="{% url 'accounts:profile' %}" class="nav-link nav-link--auth">{{ user.username }}</a>
+                        <a href="{% url 'accounts:logout' %}" class="nav-link nav-link--auth">Sair</a>
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}" class="nav-link nav-link--auth">Login</a>
+                        <a href="{% url 'accounts:register' %}" class="nav-link nav-link--auth">Cadastrar</a>
+                    {% endif %}
+                </div>
+            </details>
+        </div>
     </nav>
 
-    {% block body %}
+    <main class="container">
+        {% block body %}
+        {% endblock body %}
+    </main>
 
-    {% endblock body %}
+    <footer class="footer-main">
+        <div class="container">
+            <p>© 2026 HotelApp · Trabalho UDWMJ · Anima Educação</p>
+        </div>
+    </footer>
 
     <script src="{% static 'js/script.js' %}"></script>
 </body>
