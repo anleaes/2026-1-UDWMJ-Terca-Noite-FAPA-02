@@ -3,21 +3,32 @@
 {% block title %}{{ block.super }} - Início{% endblock title %}
 
 {% block body %}
-<h1>Bem-vindo ao HotelApp</h1>
-<p>Encontre o lugar perfeito para sua estadia.</p>
+<section class="section">
+    <h1 class="page-title">Bem-vindo ao HotelApp</h1>
+    <p class="muted">Encontre o lugar perfeito para sua estadia.</p>
+</section>
 
-<h2>Propriedades em destaque</h2>
-<ul>
-{% for property in featured_properties %}
-    <li>
-        <h3>{{ property.name }} ({{ property.get_property_type_display }})</h3>
-        <p>{{ property.description|truncatewords:30 }}</p>
-        <p>Endereço: {{ property.address }} | Avaliação: {{ property.rating }}</p>
-        {% if property.photo %}<img src="{{ property.photo.url }}" width="240">{% endif %}
-        <p><a href="{% url 'properties:list_properties' %}">Ver todas</a></p>
-    </li>
-{% empty %}
-    <li>Nenhuma propriedade disponível no momento.</li>
-{% endfor %}
-</ul>
+<section class="section">
+    <h2 class="section-title">Propriedades em destaque</h2>
+    <ul class="card-grid">
+    {% for property in featured_properties %}
+        <li class="card">
+            {% if property.photo %}
+                <img src="{{ property.photo.url }}" class="card-image" alt="{{ property.name }}">
+            {% endif %}
+            <div class="card-body">
+                <h3 class="card-title">{{ property.name }}</h3>
+                <p class="card-meta">{{ property.get_property_type_display }} · ★ {{ property.rating }}</p>
+                <p class="card-meta">{{ property.address }}</p>
+                <p class="card-description">{{ property.description|truncatewords:20 }}</p>
+                <div class="card-actions">
+                    <a href="{% url 'properties:list_properties' %}" class="btn btn--primary btn--sm">Ver todas</a>
+                </div>
+            </div>
+        </li>
+    {% empty %}
+        <li class="empty-state">Nenhuma propriedade disponível.</li>
+    {% endfor %}
+    </ul>
+</section>
 {% endblock body %}
