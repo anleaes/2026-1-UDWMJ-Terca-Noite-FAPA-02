@@ -13,9 +13,7 @@ function initMobileNavAutoClose() {
             return;
         }
 
-        if (window.matchMedia('(max-width: 768px)').matches) {
-            mobileNav.open = false;
-        }
+        mobileNav.open = false;
     });
 }
 
