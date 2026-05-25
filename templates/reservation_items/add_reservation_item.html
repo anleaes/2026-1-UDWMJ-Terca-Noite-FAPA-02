@@ -3,11 +3,14 @@
 {% block title %}Item de Reserva - {{ block.super }}{% endblock title %}
 
 {% block body %}
-<h1>Item de Reserva</h1>
-<form method="post">
+<h1 class="page-title">Item de Reserva</h1>
+
+<form method="post" class="form">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Salvar</button>
-    <a href="{% url 'reservation_items:list_reservation_items' %}">Cancelar</a>
+    <div class="form-actions">
+        <button type="submit" class="btn btn--primary">Salvar</button>
+        <a href="{% url 'reservation_items:list_reservation_items' %}" class="btn btn--secondary">Cancelar</a>
+    </div>
 </form>
 {% endblock body %}
