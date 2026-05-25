@@ -3,29 +3,36 @@
 {% block title %}Itens de Reserva - {{ block.super }}{% endblock title %}
 
 {% block body %}
-<h1>Itens de Reserva</h1>
+<h1 class="page-title">Itens de Reserva</h1>
 
-<form method="get" action="{% url 'reservation_items:search_reservation_items' %}">
-    <input type="text" name="query" placeholder="Buscar por serviço..." value="{{ query|default:'' }}">
-    <button type="submit">Buscar</button>
-</form>
+<div class="toolbar">
+    <form method="get" action="{% url 'reservation_items:search_reservation_items' %}">
+        <input type="text" name="query" placeholder="Buscar..." value="{{ query|default:'' }}">
+        <button type="submit" class="btn btn--secondary">Buscar</button>
+    </form>
+    {% if user.is_authenticated %}
+        <a href="{% url 'reservation_items:add_reservation_item' %}" class="btn btn--primary">Novo Item de Reserva</a>
+    {% endif %}
+</div>
 
-<p><a href="{% url 'reservation_items:add_reservation_item' %}">Novo Item</a></p>
-
-<ul>
+<ul class="card-grid">
 {% for item in items %}
-    <li>
-        <h3>{{ item.service.name }} x{{ item.quantity }}</h3>
-        <p>Reserva: #{{ item.reservation.id }} - {{ item.reservation.guest.first_name }} {{ item.reservation.guest.last_name }}</p>
-        <p>Preço unitário: R$ {{ item.unit_price }} | Subtotal: R$ {{ item.subtotal }}</p>
-        <p>Data do serviço: {{ item.service_date }}</p>
-        <p>
-            <a href="{% url 'reservation_items:edit_reservation_item' item.id %}">Editar</a>
-            <a href="{% url 'reservation_items:delete_reservation_item' item.id %}" onclick="return confirm('Confirma exclusão?')">Excluir</a>
-        </p>
+    <li class="card">
+        <div class="card-body">
+            <h3 class="card-title">{{ item.service.name }} x{{ item.quantity }}</h3>
+            <p class="card-meta">Reserva: #{{ item.reservation.id }} - {{ item.reservation.guest }}</p>
+            <p class="card-meta">Preço unit.: R$ {{ item.unit_price }} · Subtotal: R$ {{ item.subtotal }}</p>
+            <p class="card-meta">Data do serviço: {{ item.service_date }}</p>
+            {% if user.is_authenticated %}
+                <div class="card-actions">
+                    <a href="{% url 'reservation_items:edit_reservation_item' item.id %}" class="btn btn--secondary btn--sm">Editar</a>
+                    <a href="{% url 'reservation_items:delete_reservation_item' item.id %}" class="btn btn--danger btn--sm" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+                </div>
+            {% endif %}
+        </div>
     </li>
 {% empty %}
-    <li>Nenhum item cadastrado.</li>
+    <li class="empty-state">Nenhum item cadastrado.</li>
 {% endfor %}
 </ul>
 {% endblock body %}
