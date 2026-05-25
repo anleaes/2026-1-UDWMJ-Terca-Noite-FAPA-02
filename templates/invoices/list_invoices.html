@@ -3,31 +3,36 @@
 {% block title %}Faturas - {{ block.super }}{% endblock title %}
 
 {% block body %}
-<h1>Faturas</h1>
+<section class="section">
+    <h1 class="page-title">Faturas</h1>
 
-<form method="get" action="{% url 'invoices:search_invoices' %}">
-    <input type="text" name="query" placeholder="Buscar por número, hóspede ou quarto..." value="{{ query|default:'' }}">
-    <button type="submit">Buscar</button>
-</form>
+    <div class="toolbar">
+        <form method="get" action="{% url 'invoices:search_invoices' %}">
+            <input type="text" name="query" placeholder="Buscar por número, hóspede ou quarto..." value="{{ query|default:'' }}">
+            <button type="submit" class="btn btn--secondary">Buscar</button>
+        </form>
+        <a href="{% url 'invoices:add_invoice' %}" class="btn btn--primary">Nova Fatura</a>
+    </div>
 
-<p><a href="{% url 'invoices:add_invoice' %}">Nova Fatura</a></p>
-
-<ul>
-{% for invoice in invoices %}
-    <li>
-        <h3>{{ invoice.number }}</h3>
-        <p>Reserva: {{ invoice.reservation }}</p>
-        <p>Emissão: {{ invoice.issue_date }} | Valor: R$ {{ invoice.amount }}</p>
-        {% if invoice.document_pdf %}
-            <p><a href="{{ invoice.document_pdf.url }}" target="_blank">Abrir PDF</a></p>
-        {% endif %}
-        <p>
-            <a href="{% url 'invoices:edit_invoice' invoice.id %}">Editar</a>
-            <a href="{% url 'invoices:delete_invoice' invoice.id %}" onclick="return confirm('Confirma exclusão?')">Excluir</a>
-        </p>
-    </li>
-{% empty %}
-    <li>Nenhuma fatura cadastrada.</li>
-{% endfor %}
-</ul>
+    <ul class="card-grid">
+    {% for invoice in invoices %}
+        <li class="card">
+            <div class="card-body">
+                <h3 class="card-title">{{ invoice.number }}</h3>
+                <p class="card-meta">Reserva: {{ invoice.reservation }}</p>
+                <p class="card-meta">Emissão: {{ invoice.issue_date }} · Valor: R$ {{ invoice.amount }}</p>
+                {% if invoice.document_pdf %}
+                    <p class="card-meta"><a href="{{ invoice.document_pdf.url }}" target="_blank" rel="noopener">Abrir PDF</a></p>
+                {% endif %}
+                <div class="card-actions">
+                    <a href="{% url 'invoices:edit_invoice' invoice.id %}" class="btn btn--secondary btn--sm">Editar</a>
+                    <a href="{% url 'invoices:delete_invoice' invoice.id %}" class="btn btn--danger btn--sm" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+                </div>
+            </div>
+        </li>
+    {% empty %}
+        <li class="empty-state">Nenhuma fatura cadastrada.</li>
+    {% endfor %}
+    </ul>
+</section>
 {% endblock body %}

@@ -3,12 +3,16 @@
 {% block title %}Fatura - {{ block.super }}{% endblock title %}
 
 {% block body %}
-<h1>Fatura</h1>
+<section class="section">
+    <h1 class="page-title">Fatura</h1>
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Salvar</button>
-    <a href="{% url 'invoices:list_invoices' %}">Cancelar</a>
-</form>
+    <form method="post" enctype="multipart/form-data" class="form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="form-actions">
+            <button type="submit" class="btn btn--primary">Salvar</button>
+            <a href="{% url 'invoices:list_invoices' %}" class="btn btn--secondary">Cancelar</a>
+        </div>
+    </form>
+</section>
 {% endblock body %}
