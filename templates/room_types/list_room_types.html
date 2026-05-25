@@ -1,27 +1,37 @@
 {% extends 'base.html' %}
+
 {% block title %}Tipos de Quarto - {{ block.super }}{% endblock title %}
+
 {% block body %}
-<h1>Tipos de Quarto</h1>
-<form method="get" action="{% url 'room_types:search_room_types' %}">
-    <input type="text" name="query" placeholder="Buscar..." value="{{ query|default:'' }}">
-    <button type="submit">Buscar</button>
-</form>
-{% if user.is_authenticated %}
-    <a href="{% url 'room_types:add_room_type' %}">Novo Tipo de Quarto</a>
-{% endif %}
-<ul>
+<h1 class="page-title">Tipos de Quarto</h1>
+
+<div class="toolbar">
+    <form method="get" action="{% url 'room_types:search_room_types' %}">
+        <input type="text" name="query" placeholder="Buscar..." value="{{ query|default:'' }}">
+        <button type="submit" class="btn btn--secondary">Buscar</button>
+    </form>
+    {% if user.is_authenticated %}
+        <a href="{% url 'room_types:add_room_type' %}" class="btn btn--primary">Novo Tipo de Quarto</a>
+    {% endif %}
+</div>
+
+<ul class="card-grid">
 {% for room_type in room_types %}
-    <li>
-        <h3>{{ room_type.name }}</h3>
-        <p>{{ room_type.description }}</p>
-        <p>Preço base: {{ room_type.base_price }} | Ocupação máxima: {{ room_type.max_occupancy }}</p>
-        {% if user.is_authenticated %}
-            <a href="{% url 'room_types:edit_room_type' room_type.id %}">Editar</a>
-            <a href="{% url 'room_types:delete_room_type' room_type.id %}" onclick="return confirm('Confirma exclusão?')">Excluir</a>
-        {% endif %}
+    <li class="card">
+        <div class="card-body">
+            <h3 class="card-title">{{ room_type.name }}</h3>
+            <p class="card-meta">Preço base: R$ {{ room_type.base_price }} · Ocupação: {{ room_type.max_occupancy }}</p>
+            <p class="card-description">{{ room_type.description|truncatewords:20 }}</p>
+            {% if user.is_authenticated %}
+                <div class="card-actions">
+                    <a href="{% url 'room_types:edit_room_type' room_type.id %}" class="btn btn--secondary btn--sm">Editar</a>
+                    <a href="{% url 'room_types:delete_room_type' room_type.id %}" class="btn btn--danger btn--sm" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+                </div>
+            {% endif %}
+        </div>
     </li>
 {% empty %}
-    <li>Nenhum tipo de quarto cadastrado.</li>
+    <li class="empty-state">Nenhum tipo de quarto cadastrado.</li>
 {% endfor %}
 </ul>
 {% endblock body %}
