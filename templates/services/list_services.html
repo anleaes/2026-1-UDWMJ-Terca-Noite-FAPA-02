@@ -3,32 +3,40 @@
 {% block title %}Serviços - {{ block.super }}{% endblock title %}
 
 {% block body %}
-<h1>Serviços</h1>
+<section class="section">
+    <h1 class="page-title">Serviços</h1>
 
-<form method="get" action="{% url 'services:search_services' %}">
-    <input type="text" name="query" placeholder="Buscar..." value="{{ query|default:'' }}">
-    <button type="submit">Buscar</button>
-</form>
-
-{% if user.is_authenticated %}
-    <a href="{% url 'services:add_service' %}">Novo Serviço</a>
-{% endif %}
-
-<ul>
-{% for service in services %}
-    <li>
-        <h3>{{ service.name }}</h3>
-        <p>Categoria: {{ service.category.name }}</p>
-        <p>{{ service.description }}</p>
-        <p>Preço: R$ {{ service.price }}</p>
-        {% if service.photo %}<img src="{{ service.photo.url }}" width="200">{% endif %}
+    <div class="toolbar">
+        <form method="get" action="{% url 'services:search_services' %}">
+            <input type="text" name="query" placeholder="Buscar..." value="{{ query|default:'' }}">
+            <button type="submit" class="btn btn--secondary">Buscar</button>
+        </form>
         {% if user.is_authenticated %}
-            <a href="{% url 'services:edit_service' service.id %}">Editar</a>
-            <a href="{% url 'services:delete_service' service.id %}" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+            <a href="{% url 'services:add_service' %}" class="btn btn--primary">Novo Serviço</a>
         {% endif %}
-    </li>
-{% empty %}
-    <li>Nenhum serviço cadastrado.</li>
-{% endfor %}
-</ul>
+    </div>
+
+    <ul class="card-grid">
+    {% for service in services %}
+        <li class="card">
+            {% if service.photo %}
+                <img src="{{ service.photo.url }}" class="card-image" alt="{{ service.name }}">
+            {% endif %}
+            <div class="card-body">
+                <h3 class="card-title">{{ service.name }}</h3>
+                <p class="card-meta">{{ service.category.name }} · R$ {{ service.price }}</p>
+                <p class="card-description">{{ service.description|truncatewords:20 }}</p>
+                {% if user.is_authenticated %}
+                    <div class="card-actions">
+                        <a href="{% url 'services:edit_service' service.id %}" class="btn btn--secondary btn--sm">Editar</a>
+                        <a href="{% url 'services:delete_service' service.id %}" class="btn btn--danger btn--sm" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+                    </div>
+                {% endif %}
+            </div>
+        </li>
+    {% empty %}
+        <li class="empty-state">Nenhum serviço cadastrado.</li>
+    {% endfor %}
+    </ul>
+</section>
 {% endblock body %}
