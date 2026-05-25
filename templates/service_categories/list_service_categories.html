@@ -3,31 +3,40 @@
 {% block title %}Categorias de Serviço - {{ block.super }}{% endblock title %}
 
 {% block body %}
-<h1>Categorias de Serviço</h1>
+<section class="section">
+    <h1 class="page-title">Categorias de Serviço</h1>
 
-<form method="get" action="{% url 'service_categories:search_service_categories' %}">
-    <input type="text" name="query" placeholder="Buscar..." value="{{ query|default:'' }}">
-    <button type="submit">Buscar</button>
-</form>
-
-{% if user.is_authenticated %}
-    <a href="{% url 'service_categories:add_service_category' %}">Nova Categoria</a>
-{% endif %}
-
-<ul>
-{% for category in categories %}
-    <li>
-        <h3>{{ category.name }}</h3>
-        <p>{{ category.description }}</p>
-        <p>Ativa: {{ category.is_active|yesno:"Sim,Não" }}</p>
-        {% if category.icon %}<img src="{{ category.icon.url }}" width="50">{% endif %}
+    <div class="toolbar">
+        <form method="get" action="{% url 'service_categories:search_service_categories' %}">
+            <input type="text" name="query" placeholder="Buscar..." value="{{ query|default:'' }}">
+            <button type="submit" class="btn btn--secondary">Buscar</button>
+        </form>
         {% if user.is_authenticated %}
-            <a href="{% url 'service_categories:edit_service_category' category.id %}">Editar</a>
-            <a href="{% url 'service_categories:delete_service_category' category.id %}" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+            <a href="{% url 'service_categories:add_service_category' %}" class="btn btn--primary">Nova Categoria</a>
         {% endif %}
-    </li>
-{% empty %}
-    <li>Nenhuma categoria cadastrada.</li>
-{% endfor %}
-</ul>
+    </div>
+
+    <ul class="card-grid">
+    {% for category in categories %}
+        <li class="card">
+            {% if category.icon %}
+                <img src="{{ category.icon.url }}" class="card-image" alt="{{ category.name }}">
+            {% endif %}
+            <div class="card-body">
+                <h3 class="card-title">{{ category.name }}</h3>
+                <p class="card-meta">Ativa: {{ category.is_active|yesno:"Sim,Não" }}</p>
+                <p class="card-description">{{ category.description }}</p>
+                {% if user.is_authenticated %}
+                    <div class="card-actions">
+                        <a href="{% url 'service_categories:edit_service_category' category.id %}" class="btn btn--secondary btn--sm">Editar</a>
+                        <a href="{% url 'service_categories:delete_service_category' category.id %}" class="btn btn--danger btn--sm" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+                    </div>
+                {% endif %}
+            </div>
+        </li>
+    {% empty %}
+        <li class="empty-state">Nenhuma categoria cadastrada.</li>
+    {% endfor %}
+    </ul>
+</section>
 {% endblock body %}
