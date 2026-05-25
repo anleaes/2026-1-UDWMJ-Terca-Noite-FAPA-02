@@ -3,11 +3,13 @@
 {% block title %}Registrar - {{ block.super }}{% endblock title %}
 
 {% block body %}
-<h1>Criar conta</h1>
-<form method="post">
+<h1 class="page-title">Criar conta</h1>
+<form method="post" class="form">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Registrar</button>
+    <div class="form-actions">
+        <button type="submit" class="btn btn--primary">Registrar</button>
+        <a href="{% url 'accounts:login' %}" class="btn btn--secondary">Já tenho conta</a>
+    </div>
 </form>
-<p>Já tem conta? <a href="{% url 'accounts:login' %}">Entrar</a></p>
 {% endblock body %}
