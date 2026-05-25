@@ -1,28 +1,40 @@
 {% extends 'base.html' %}
+
 {% block title %}Comodidades - {{ block.super }}{% endblock title %}
+
 {% block body %}
-<h1>Comodidades</h1>
-<form method="get" action="{% url 'amenities:search_amenities' %}">
-    <input type="text" name="query" placeholder="Buscar..." value="{{ query|default:'' }}">
-    <button type="submit">Buscar</button>
-</form>
-{% if user.is_authenticated %}
-    <a href="{% url 'amenities:add_amenity' %}">Nova Comodidade</a>
-{% endif %}
-<ul>
+<h1 class="page-title">Comodidades</h1>
+
+<div class="toolbar">
+    <form method="get" action="{% url 'amenities:search_amenities' %}">
+        <input type="text" name="query" placeholder="Buscar..." value="{{ query|default:'' }}">
+        <button type="submit" class="btn btn--secondary">Buscar</button>
+    </form>
+    {% if user.is_authenticated %}
+        <a href="{% url 'amenities:add_amenity' %}" class="btn btn--primary">Nova Comodidade</a>
+    {% endif %}
+</div>
+
+<ul class="card-grid">
 {% for amenity in amenities %}
-    <li>
-        <h3>{{ amenity.name }}</h3>
-        <p>{{ amenity.description }}</p>
-        <p>Premium: {{ amenity.is_premium|yesno:"Sim,Não" }}</p>
-        {% if amenity.icon %}<img src="{{ amenity.icon.url }}" width="50">{% endif %}
-        {% if user.is_authenticated %}
-            <a href="{% url 'amenities:edit_amenity' amenity.id %}">Editar</a>
-            <a href="{% url 'amenities:delete_amenity' amenity.id %}" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+    <li class="card">
+        {% if amenity.icon %}
+            <img src="{{ amenity.icon.url }}" width="50" alt="{{ amenity.name }}">
         {% endif %}
+        <div class="card-body">
+            <h3 class="card-title">{{ amenity.name }}</h3>
+            <p class="card-meta">Premium: {{ amenity.is_premium|yesno:"Sim,Não" }}</p>
+            <p class="card-description">{{ amenity.description }}</p>
+            {% if user.is_authenticated %}
+                <div class="card-actions">
+                    <a href="{% url 'amenities:edit_amenity' amenity.id %}" class="btn btn--secondary btn--sm">Editar</a>
+                    <a href="{% url 'amenities:delete_amenity' amenity.id %}" class="btn btn--danger btn--sm" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+                </div>
+            {% endif %}
+        </div>
     </li>
 {% empty %}
-    <li>Nenhuma comodidade cadastrada.</li>
+    <li class="empty-state">Nenhuma comodidade cadastrada.</li>
 {% endfor %}
 </ul>
 {% endblock body %}
