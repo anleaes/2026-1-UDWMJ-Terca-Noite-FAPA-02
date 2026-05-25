@@ -3,12 +3,16 @@
 {% block title %}Avaliação - {{ block.super }}{% endblock title %}
 
 {% block body %}
-<h1>Avaliação</h1>
+<section class="section">
+    <h1 class="page-title">Avaliação</h1>
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Salvar</button>
-    <a href="{% url 'reviews:list_reviews' %}">Cancelar</a>
-</form>
+    <form method="post" enctype="multipart/form-data" class="form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="form-actions">
+            <button type="submit" class="btn btn--primary">Salvar</button>
+            <a href="{% url 'reviews:list_reviews' %}" class="btn btn--secondary">Cancelar</a>
+        </div>
+    </form>
+</section>
 {% endblock body %}
