@@ -3,30 +3,37 @@
 {% block title %}Funcionários - {{ block.super }}{% endblock title %}
 
 {% block body %}
-<h1>Funcionários</h1>
+<section class="section">
+    <h1 class="page-title">Funcionários</h1>
 
-<form method="get" action="{% url 'employees:search_employees' %}">
-    <input type="text" name="query" placeholder="Buscar por sobrenome..." value="{{ query|default:'' }}">
-    <button type="submit">Buscar</button>
-</form>
+    <div class="toolbar">
+        <form method="get" action="{% url 'employees:search_employees' %}">
+            <input type="text" name="query" placeholder="Buscar por sobrenome..." value="{{ query|default:'' }}">
+            <button type="submit" class="btn btn--secondary">Buscar</button>
+        </form>
+        <a href="{% url 'employees:add_employee' %}" class="btn btn--primary">Novo Funcionário</a>
+    </div>
 
-<p><a href="{% url 'employees:add_employee' %}">Novo Funcionário</a></p>
-
-<ul>
-{% for employee in employees %}
-    <li>
-        <h3>{{ employee.first_name }} {{ employee.last_name }}</h3>
-        <p>Cargo: {{ employee.position }} | Contratado em: {{ employee.hired_date }}</p>
-        <p>Telefone: {{ employee.phone }} | E-mail: {{ employee.email }}</p>
-        <p>Salário: R$ {{ employee.salary }} | Ativo: {{ employee.is_active|yesno:"Sim,Não" }}</p>
-        {% if employee.contract %}<p><a href="{{ employee.contract.url }}" target="_blank">Ver contrato</a></p>{% endif %}
-        <p>
-            <a href="{% url 'employees:edit_employee' employee.id %}">Editar</a>
-            <a href="{% url 'employees:delete_employee' employee.id %}" onclick="return confirm('Confirma exclusão?')">Excluir</a>
-        </p>
-    </li>
-{% empty %}
-    <li>Nenhum funcionário cadastrado.</li>
-{% endfor %}
-</ul>
+    <ul class="card-grid">
+    {% for employee in employees %}
+        <li class="card">
+            <div class="card-body">
+                <h3 class="card-title">{{ employee.first_name }} {{ employee.last_name }}</h3>
+                <p class="card-meta">Cargo: {{ employee.position }} · Contratado em: {{ employee.hired_date }}</p>
+                <p class="card-meta">{{ employee.email }} · {{ employee.phone }}</p>
+                <p class="card-meta">Salário: R$ {{ employee.salary }} · {{ employee.is_active|yesno:"Ativo,Inativo" }}</p>
+                {% if employee.contract %}
+                    <p class="card-meta"><a href="{{ employee.contract.url }}" target="_blank" rel="noopener">Ver contrato</a></p>
+                {% endif %}
+                <div class="card-actions">
+                    <a href="{% url 'employees:edit_employee' employee.id %}" class="btn btn--secondary btn--sm">Editar</a>
+                    <a href="{% url 'employees:delete_employee' employee.id %}" class="btn btn--danger btn--sm" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+                </div>
+            </div>
+        </li>
+    {% empty %}
+        <li class="empty-state">Nenhum funcionário cadastrado.</li>
+    {% endfor %}
+    </ul>
+</section>
 {% endblock body %}
