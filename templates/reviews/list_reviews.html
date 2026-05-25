@@ -21,8 +21,7 @@
         {% endif %}
         <div class="card-body">
             <h3 class="card-title">
-                {% for i in "12345" %}{% if forloop.counter <= review.rating %}
-                ★ ☆ {% else %} {% endif %}{% endfor %}
+                {% for i in "12345" %}{% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}{% endfor %}
             </h3>
             <p class="card-meta">Reserva #{{ review.reservation.id }} · {{ review.created_at|date:"d/m/Y" }}</p>
             <p class="card-description">{{ review.comment }}</p>
