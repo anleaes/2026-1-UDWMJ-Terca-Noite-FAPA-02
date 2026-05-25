@@ -1,11 +1,16 @@
 {% extends 'base.html' %}
+
 {% block title %}Propriedade - {{ block.super }}{% endblock title %}
+
 {% block body %}
-<h1>Propriedade</h1>
-<form method="post" enctype="multipart/form-data">
+<h1 class="page-title">Propriedade</h1>
+
+<form method="post" enctype="multipart/form-data" class="form">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Salvar</button>
-    <a href="{% url 'properties:list_properties' %}">Cancelar</a>
+    <div class="form-actions">
+        <button type="submit" class="btn btn--primary">Salvar</button>
+        <a href="{% url 'properties:list_properties' %}" class="btn btn--secondary">Cancelar</a>
+    </div>
 </form>
 {% endblock body %}

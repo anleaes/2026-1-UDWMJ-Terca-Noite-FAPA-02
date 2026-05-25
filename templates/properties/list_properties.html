@@ -1,28 +1,41 @@
 {% extends 'base.html' %}
+
 {% block title %}Propriedades - {{ block.super }}{% endblock title %}
+
 {% block body %}
-<h1>Propriedades</h1>
-<form method="get" action="{% url 'properties:search_properties' %}">
-    <input type="text" name="query" placeholder="Buscar..." value="{{ query|default:'' }}">
-    <button type="submit">Buscar</button>
-</form>
-{% if user.is_authenticated %}
-    <a href="{% url 'properties:add_property' %}">Nova Propriedade</a>
-{% endif %}
-<ul>
+<h1 class="page-title">Propriedades</h1>
+
+<div class="toolbar">
+    <form method="get" action="{% url 'properties:search_properties' %}">
+        <input type="text" name="query" placeholder="Buscar..." value="{{ query|default:'' }}">
+        <button type="submit" class="btn btn--secondary">Buscar</button>
+    </form>
+    {% if user.is_authenticated %}
+        <a href="{% url 'properties:add_property' %}" class="btn btn--primary">Nova Propriedade</a>
+    {% endif %}
+</div>
+
+<ul class="card-grid">
 {% for property in properties %}
-    <li>
-        <h3>{{ property.name }} ({{ property.get_property_type_display }})</h3>
-        <p>{{ property.description }}</p>
-        <p>Endereço: {{ property.address }} | Avaliação: {{ property.rating }}</p>
-        {% if property.photo %}<img src="{{ property.photo.url }}" width="200">{% endif %}
-        {% if user.is_authenticated %}
-            <a href="{% url 'properties:edit_property' property.id %}">Editar</a>
-            <a href="{% url 'properties:delete_property' property.id %}" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+    <li class="card">
+        {% if property.photo %}
+            <img src="{{ property.photo.url }}" class="card-image" alt="{{ property.name }}">
         {% endif %}
+        <div class="card-body">
+            <h3 class="card-title">{{ property.name }}</h3>
+            <p class="card-meta">{{ property.get_property_type_display }} · ★ {{ property.rating }}</p>
+            <p class="card-meta">{{ property.address }}</p>
+            <p class="card-description">{{ property.description|truncatewords:20 }}</p>
+            {% if user.is_authenticated %}
+                <div class="card-actions">
+                    <a href="{% url 'properties:edit_property' property.id %}" class="btn btn--secondary btn--sm">Editar</a>
+                    <a href="{% url 'properties:delete_property' property.id %}" class="btn btn--danger btn--sm" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+                </div>
+            {% endif %}
+        </div>
     </li>
 {% empty %}
-    <li>Nenhuma propriedade cadastrada.</li>
+    <li class="empty-state">Nenhuma propriedade cadastrada.</li>
 {% endfor %}
 </ul>
 {% endblock body %}
