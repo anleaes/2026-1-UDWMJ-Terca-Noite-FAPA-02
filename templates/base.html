@@ -10,13 +10,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <title>{% block title %}HotelApp{% endblock title %}</title>
+    <title>{% block title %}Host Flow{% endblock title %}</title>
 </head>
 <body>
 
     <nav class="nav-main">
         <div class="container nav-container">
-            <a href="{% url 'core:home' %}" class="nav-brand">HotelApp</a>
+            <a href="{% url 'core:home' %}" class="nav-brand">Host Flow</a>
             <details class="nav-mobile-toggle">
                 <summary>☰</summary>
                 <div class="nav-links">
@@ -54,7 +54,7 @@
 
     <footer class="footer-main">
         <div class="container">
-            <p>© 2026 HotelApp · Trabalho UDWMJ · Anima Educação</p>
+            <p>© {% now "Y" %} Host Flow</p>
         </div>
     </footer>
 
