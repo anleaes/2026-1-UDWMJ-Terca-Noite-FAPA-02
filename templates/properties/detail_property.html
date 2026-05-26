@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ property.name }} - {{ block.super }}{% endblock title %}
+
+{% block body %}
+<section class="property-detail">
+    <div class="property-detail__hero">
+        <div class="property-detail__media">
+            {% if property.photo %}
+                <img src="{{ property.photo.url }}" alt="{{ property.name }}" class="property-detail__image">
+            {% else %}
+                <div class="property-detail__placeholder" aria-hidden="true">{{ property.name|slice:":1" }}</div>
+            {% endif %}
+        </div>
+
+        <div class="property-detail__summary">
+            <p class="property-detail__eyebrow">Propriedade selecionada</p>
+            <h1 class="page-title">{{ property.name }}</h1>
+            <p class="muted">{{ property.address }}</p>
+            <p class="property-detail__stats">
+                {{ property.get_property_type_display }} · ★ {{ property.rating }} · {{ room_count }} quarto{{ room_count|pluralize }}
+            </p>
+            <p class="property-detail__description">{{ property.description }}</p>
+            <div class="property-detail__numbers">
+                <div class="property-detail__number-card">
+                    <strong>{{ available_count }}</strong>
+                    <span>{% if available_count == 1 %}disponível{% else %}disponíveis{% endif %}</span>
+                </div>
+                <div class="property-detail__number-card">
+                    <strong>{{ room_count }}</strong>
+                    <span>quarto{{ room_count|pluralize }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-heading">
+        <div>
+            <h2 class="section-title">Quartos dessa propriedade</h2>
+            <p class="muted">Clique em um quarto para ver mais informações e simular o valor conforme a quantidade de dias.</p>
+        </div>
+        <a href="{% url 'properties:list_properties' %}" class="btn btn--secondary btn--sm">Voltar para propriedades</a>
+    </div>
+
+    <ul class="card-grid card-grid--rooms">
+    {% for room in rooms %}
+        <li class="card room-card" data-room-card data-daily-rate="{{ room.daily_rate }}">
+            <details class="room-card__details">
+                <summary class="room-card__summary">
+                    <div class="room-card__summary-main">
+                        <div class="room-card__media">
+                            {% if room.photo %}
+                                <img src="{{ room.photo.url }}" class="card-image" alt="Quarto {{ room.number }}">
+                            {% else %}
+                                <div class="room-card__placeholder" aria-hidden="true">{{ room.number }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="room-card__summary-copy">
+                            <div class="room-card__header">
+                                <h3 class="card-title">Quarto {{ room.number }}</h3>
+                                <span class="badge {{ room.display_status_class }}">{{ room.display_status_label }}</span>
+                            </div>
+                            <p class="card-meta">{{ room.room_type.name }} · Andar {{ room.floor }}</p>
+                            <p class="card-meta">Diária: R$ {{ room.daily_rate }}</p>
+                        </div>
+                    </div>
+                    <span class="room-card__toggle">Ver informações</span>
+                </summary>
+
+                <div class="room-card__panel">
+                    {% if room.selected_reservation %}
+                        <div class="room-card__selected-reservation">
+                            <p class="room-card__selected-title">Quarto selecionado</p>
+                            <p class="room-card__selected-line">
+                                Hóspede: {{ room.selected_reservation.guest.first_name }} {{ room.selected_reservation.guest.last_name }}
+                            </p>
+                            <p class="room-card__selected-line">
+                                Estadia: {{ room.selected_reservation.check_in }} → {{ room.selected_reservation.check_out }}
+                            </p>
+                            <p class="room-card__selected-line">
+                                Total: R$ {{ room.selected_reservation.total }} · {{ room.selected_reservation.get_payment_method_display }}
+                            </p>
+                        </div>
+                    {% endif %}
+
+                    <p class="card-description">{{ room.description }}</p>
+                    {% if room.amenities.all %}
+                        <p class="room-card__amenities">
+                            {% for amenity in room.amenities.all %}
+                                <span class="room-card__amenity">{{ amenity.name }}</span>{% if not forloop.last %}<span class="room-card__amenity-separator">·</span>{% endif %}
+                            {% empty %}
+                                <span class="muted">Sem comodidades informadas</span>
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+
+                    <div class="room-card__calculator" data-room-calculator>
+                        <div class="form-grid form-grid--split">
+                            <div class="form-field">
+                                <label class="form-label" for="check-in-{{ room.id }}">Entrada</label>
+                                <input id="check-in-{{ room.id }}" type="date" class="form-input" data-room-check-in>
+                            </div>
+                            <div class="form-field">
+                                <label class="form-label" for="check-out-{{ room.id }}">Saída</label>
+                                <input id="check-out-{{ room.id }}" type="date" class="form-input" data-room-check-out>
+                            </div>
+                        </div>
+
+                        <div class="room-card__price-box">
+                            <div>
+                                <p class="room-card__price-label">Preço estimado</p>
+                                <strong class="room-card__price" data-room-total>R$ 0,00</strong>
+                            </div>
+                            <p class="room-card__price-hint" data-room-nights>Escolha as datas para calcular o valor.</p>
+                        </div>
+
+                        <div class="room-card__actions">
+                            {% if room.display_status_label == 'Disponível' %}
+                                <a href="{% url 'reservations:book_room' room.id %}" class="btn btn--primary">Selecionar quarto</a>
+                            {% elif room.display_status_label == 'Selecionado' %}
+                                <button type="button" class="btn btn--secondary" disabled>Já selecionado</button>
+                            {% else %}
+                                <button type="button" class="btn btn--secondary" disabled>Indisponível</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </details>
+        </li>
+    {% empty %}
+        <li class="empty-state">Nenhum quarto cadastrado para esta propriedade.</li>
+    {% endfor %}
+    </ul>
+</section>
+{% endblock body %}

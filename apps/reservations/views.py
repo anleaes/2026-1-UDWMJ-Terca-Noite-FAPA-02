@@ -83,7 +83,7 @@ def book_room(request, id_room):
             reservation.room = room
             reservation.total = (reservation.check_out - reservation.check_in).days * room.daily_rate
             reservation.save()
-            return redirect('reservations:list_reservations')
+            return redirect('properties:detail_property', id_property=room.property.id)
     else:
         form = ReservationBookingForm()
     context = {'form': form, 'room': room}
