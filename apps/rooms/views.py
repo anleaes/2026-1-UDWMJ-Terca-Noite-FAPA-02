@@ -8,7 +8,7 @@ from .models import Room
 
 def list_rooms(request):
     template_name = 'rooms/list_rooms.html'
-    rooms = Room.objects.filter(is_active=True)
+    rooms = [room for room in list(Room.objects.select_related('property', 'room_type').order_by('property__name', 'number')) if getattr(room, 'is_active', True)]
     context = {'rooms': rooms}
     return render(request, template_name, context)
 
@@ -51,6 +51,6 @@ def delete_room(request, id_room):
 
 def search_rooms(request):
     query = request.GET.get('query', '')
-    rooms = Room.objects.filter(number__icontains=query, is_active=True)
+    rooms = [room for room in list(Room.objects.select_related('property', 'room_type').filter(number__icontains=query).order_by('property__name', 'number')) if getattr(room, 'is_active', True)]
     context = {'rooms': rooms, 'query': query}
     return render(request, 'rooms/list_rooms.html', context)

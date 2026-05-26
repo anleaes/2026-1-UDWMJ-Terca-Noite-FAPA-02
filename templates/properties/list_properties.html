@@ -22,10 +22,11 @@
             <img src="{{ property.photo.url }}" class="card-image" alt="{{ property.name }}">
         {% endif %}
         <div class="card-body">
-            <h3 class="card-title">{{ property.name }}</h3>
+            <h3 class="card-title"><a href="{% url 'properties:detail_property' property.id %}" class="card-link">{{ property.name }}</a></h3>
             <p class="card-meta">{{ property.get_property_type_display }} · ★ {{ property.rating }}</p>
             <p class="card-meta">{{ property.address }}</p>
             <p class="card-description">{{ property.description|truncatewords:20 }}</p>
+            <a href="{% url 'properties:detail_property' property.id %}" class="btn btn--primary btn--sm">Ver todas as Informações</a>
             {% if user.is_authenticated %}
                 <div class="card-actions">
                     <a href="{% url 'properties:edit_property' property.id %}" class="btn btn--secondary btn--sm">Editar</a>
