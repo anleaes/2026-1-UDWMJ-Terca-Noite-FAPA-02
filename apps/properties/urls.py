@@ -1,8 +1,12 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework import routers
 
 from . import views
 
 app_name = 'properties'
+
+router = routers.SimpleRouter()
+router.register('', views.PropertyViewSet, basename='api-properties')
 
 urlpatterns = [
     path('listar/', views.list_properties, name='list_properties'),
@@ -11,4 +15,5 @@ urlpatterns = [
     path('editar/<int:id_property>/', views.edit_property, name='edit_property'),
     path('excluir/<int:id_property>/', views.delete_property, name='delete_property'),
     path('buscar/', views.search_properties, name='search_properties'),
+    path('', include(router.urls)),
 ]
