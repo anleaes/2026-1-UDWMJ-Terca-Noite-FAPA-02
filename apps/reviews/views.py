@@ -1,10 +1,14 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+from rest_framework import filters, viewsets
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from accounts.decorators import employee_required
+from accounts.permissions import IsEmployee
 
 from .forms import ReviewForm
 from .models import Review
+from .serializer import ReviewSerializer
 
 
 def list_reviews(request):
@@ -60,3 +64,22 @@ def search_reviews(request):
 	)
 	context = {'reviews': reviews, 'query': query}
 	return render(request, template_name, context)
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    serializer_class = ReviewSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['comment']
+    ordering_fields = ['rating', 'created_at']
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return [AllowAny()]
+        if self.action == 'create':
+            return [IsAuthenticated()]
+        return [IsEmployee()]
+
+    def get_queryset(self):
+        if self.action in ['list', 'retrieve']:
+            return Review.objects.filter(is_approved=True)
+        return Review.objects.all()
