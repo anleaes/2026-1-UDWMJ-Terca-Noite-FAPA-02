@@ -71,18 +71,20 @@
 
                 <div class="room-card__panel">
                     {% if room.selected_reservation %}
-                        <div class="room-card__selected-reservation">
-                            <p class="room-card__selected-title">Quarto selecionado</p>
-                            <p class="room-card__selected-line">
-                                Hóspede: {{ room.selected_reservation.guest.first_name }} {{ room.selected_reservation.guest.last_name }}
-                            </p>
-                            <p class="room-card__selected-line">
-                                Estadia: {{ room.selected_reservation.check_in }} → {{ room.selected_reservation.check_out }}
-                            </p>
-                            <p class="room-card__selected-line">
-                                Total: R$ {{ room.selected_reservation.total }} · {{ room.selected_reservation.get_payment_method_display }}
-                            </p>
-                        </div>
+                        {% if user.is_superuser %}
+                            <div class="room-card__selected-reservation">
+                                <p class="room-card__selected-title">Quarto selecionado</p>
+                                <p class="room-card__selected-line">
+                                    Hóspede: {{ room.selected_reservation.guest.first_name }} {{ room.selected_reservation.guest.last_name }}
+                                </p>
+                                <p class="room-card__selected-line">
+                                    Estadia: {{ room.selected_reservation.check_in }} → {{ room.selected_reservation.check_out }}
+                                </p>
+                                <p class="room-card__selected-line">
+                                    Total: R$ {{ room.selected_reservation.total }} · {{ room.selected_reservation.get_payment_method_display }}
+                                </p>
+                            </div>
+                        {% endif %}
                     {% endif %}
 
                     <p class="card-description">{{ room.description }}</p>
