@@ -23,12 +23,12 @@ def add_review(request):
 	template_name = 'reviews/add_review.html'
 	context = {}
 	if request.method == 'POST':
-		form = ReviewForm(request.POST, request.FILES)
+		form = ReviewForm(request.POST, request.FILES, user=request.user)
 		if form.is_valid():
 			form.save()
 			return redirect('reviews:list_reviews')
 	else:
-		form = ReviewForm()
+		form = ReviewForm(user=request.user)
 	context['form'] = form
 	return render(request, template_name, context)
 
@@ -38,12 +38,12 @@ def edit_review(request, id_review):
 	template_name = 'reviews/add_review.html'
 	review = get_object_or_404(Review, id=id_review)
 	if request.method == 'POST':
-		form = ReviewForm(request.POST, request.FILES, instance=review)
+		form = ReviewForm(request.POST, request.FILES, instance=review, user=request.user)
 		if form.is_valid():
 			form.save()
 			return redirect('reviews:list_reviews')
 	else:
-		form = ReviewForm(instance=review)
+		form = ReviewForm(instance=review, user=request.user)
 	return render(request, template_name, {'form': form})
 
 

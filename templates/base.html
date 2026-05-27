@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2">
     <title>{% block title %}Host Flow{% endblock title %}</title>
 </head>
 <body>
@@ -22,7 +22,7 @@
                 <div class="nav-links">
                     <a href="{% url 'core:home' %}" class="nav-link">Início</a>
                     <a href="{% url 'properties:list_properties' %}" class="nav-link">Propriedades</a>
-                    <a href="{% url 'rooms:list_rooms' %}" class="nav-link">Quartos</a>
+                    <a href="{% url 'reservations:list_reservations' %}" class="nav-link">Reservas</a>
                     <a href="{% url 'services:list_services' %}" class="nav-link">Serviços</a>
                     <a href="{% url 'reviews:list_reviews' %}" class="nav-link">Avaliações</a>
                     {% if user.is_authenticated %}

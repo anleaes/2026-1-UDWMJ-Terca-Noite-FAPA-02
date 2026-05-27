@@ -2,8 +2,8 @@ from django.db.models import Prefetch
 from django.shortcuts import render, get_object_or_404, redirect
 from rest_framework import filters, viewsets
 
-from accounts.decorators import employee_required
-from accounts.permissions import IsEmployeeOrReadOnly
+from accounts.decorators import employee_required, superuser_required
+from accounts.permissions import IsEmployeeOrReadOnly, IsSuperuserOrReadOnly
 
 from .forms import PropertyForm
 from .models import Property
@@ -34,7 +34,7 @@ def add_property(request):
     return render(request, template_name, context)
 
 
-@employee_required
+@superuser_required
 def edit_property(request, id_property):
     template_name = 'properties/add_property.html'
     property = get_object_or_404(Property, id=id_property)
@@ -48,7 +48,7 @@ def edit_property(request, id_property):
     return render(request, template_name, {'form': form})
 
 
-@employee_required
+@superuser_required
 def delete_property(request, id_property):
     property = get_object_or_404(Property, id=id_property)
     property.delete()
@@ -115,7 +115,7 @@ def detail_property(request, id_property):
 class PropertyViewSet(viewsets.ModelViewSet):
     queryset = Property.objects.all()
     serializer_class = PropertySerializer
-    permission_classes = [IsEmployeeOrReadOnly]
+    permission_classes = [IsSuperuserOrReadOnly]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'description', 'address']
     ordering_fields = ['name', 'rating', 'created_at']
