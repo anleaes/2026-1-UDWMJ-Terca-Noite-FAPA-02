@@ -1,9 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from rest_framework import filters, viewsets
 
 from accounts.decorators import employee_required
+from accounts.permissions import IsEmployeeOrReadOnly
 
 from .forms import RoomTypeForm
 from .models import RoomType
+from .serializer import RoomTypeSerializer
 
 
 def list_room_types(request):
@@ -54,3 +57,12 @@ def search_room_types(request):
     room_types = RoomType.objects.filter(name__icontains=query)
     context = {'room_types': room_types, 'query': query}
     return render(request, 'room_types/list_room_types.html', context)
+
+
+class RoomTypeViewSet(viewsets.ModelViewSet):
+    queryset = RoomType.objects.all()
+    serializer_class = RoomTypeSerializer
+    permission_classes = [IsEmployeeOrReadOnly]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name', 'description']
+    ordering_fields = ['name', 'base_price']

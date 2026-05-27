@@ -1,8 +1,12 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework import routers
 
 from . import views
 
 app_name = 'room_types'
+
+router = routers.SimpleRouter()
+router.register('', views.RoomTypeViewSet, basename='api-room-types')
 
 urlpatterns = [
     path('listar/', views.list_room_types, name='list_room_types'),
@@ -10,4 +14,5 @@ urlpatterns = [
     path('editar/<int:id_room_type>/', views.edit_room_type, name='edit_room_type'),
     path('excluir/<int:id_room_type>/', views.delete_room_type, name='delete_room_type'),
     path('buscar/', views.search_room_types, name='search_room_types'),
+    path('', include(router.urls)),
 ]
