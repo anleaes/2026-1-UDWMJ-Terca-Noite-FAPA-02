@@ -1,9 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from rest_framework import filters, viewsets
 
 from accounts.decorators import employee_required
+from accounts.permissions import IsEmployee
 
 from .forms import EmployeeForm
 from .models import Employee
+from .serializer import EmployeeSerializer
 
 
 @employee_required
@@ -57,3 +60,12 @@ def search_employees(request):
     employees = Employee.objects.filter(last_name__icontains=query)
     context = {'employees': employees, 'query': query}
     return render(request, template_name, context)
+
+
+class EmployeeViewSet(viewsets.ModelViewSet):
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeSerializer
+    permission_classes = [IsEmployee]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['first_name', 'last_name', 'position', 'email']
+    ordering_fields = ['first_name', 'hired_date']
