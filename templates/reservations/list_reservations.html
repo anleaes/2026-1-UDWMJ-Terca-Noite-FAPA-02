@@ -10,7 +10,9 @@
         <input type="text" name="query" placeholder="Buscar por sobrenome do hóspede..." value="{{ query|default:'' }}">
         <button type="submit" class="btn btn--secondary">Buscar</button>
     </form>
-    <a href="{% url 'reservations:add_reservation' %}" class="btn btn--primary">Nova Reserva</a>
+    {% if can_manage_reservations %}
+        <a href="{% url 'reservations:add_reservation' %}" class="btn btn--primary">Nova Reserva</a>
+    {% endif %}
 </div>
 
 <ul class="card-grid">
@@ -26,13 +28,15 @@
             <p class="card-meta">{{ reservation.check_in }} → {{ reservation.check_out }} · {{ reservation.guests_count }} hóspede(s)</p>
             <p class="card-meta">Pagamento: {{ reservation.get_payment_method_display }} · Total: R$ {{ reservation.total }}</p>
             {% if reservation.notes %}<p class="card-description">{{ reservation.notes }}</p>{% endif %}
-            <div class="card-actions">
-                {% if reservation.status == 'PENDING' %}
-                    <a href="{% url 'reservations:confirm_reservation' reservation.id %}" class="btn btn--primary btn--sm">Confirmar</a>
-                {% endif %}
-                <a href="{% url 'reservations:edit_reservation' reservation.id %}" class="btn btn--secondary btn--sm">Editar</a>
-                <a href="{% url 'reservations:delete_reservation' reservation.id %}" class="btn btn--danger btn--sm" onclick="return confirm('Confirma exclusão?')">Excluir</a>
-            </div>
+            {% if can_manage_reservations %}
+                <div class="card-actions">
+                    {% if reservation.status == 'PENDING' %}
+                        <a href="{% url 'reservations:confirm_reservation' reservation.id %}" class="btn btn--primary btn--sm">Confirmar</a>
+                    {% endif %}
+                    <a href="{% url 'reservations:edit_reservation' reservation.id %}" class="btn btn--secondary btn--sm">Editar</a>
+                    <a href="{% url 'reservations:delete_reservation' reservation.id %}" class="btn btn--danger btn--sm" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+                </div>
+            {% endif %}
         </div>
     </li>
 {% empty %}
