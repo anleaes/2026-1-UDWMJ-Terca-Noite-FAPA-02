@@ -1,9 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from rest_framework import filters, viewsets
 
 from accounts.decorators import employee_required
+from accounts.permissions import IsEmployeeOrReadOnly
 
 from .forms import AmenityForm
 from .models import Amenity
+from .serializer import AmenitySerializer
 
 
 def list_amenities(request):
@@ -54,3 +57,12 @@ def search_amenities(request):
     amenities = Amenity.objects.filter(name__icontains=query)
     context = {'amenities': amenities, 'query': query}
     return render(request, 'amenities/list_amenities.html', context)
+
+
+class AmenityViewSet(viewsets.ModelViewSet):
+    queryset = Amenity.objects.all()
+    serializer_class = AmenitySerializer
+    permission_classes = [IsEmployeeOrReadOnly]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name', 'description']
+    ordering_fields = ['name']
