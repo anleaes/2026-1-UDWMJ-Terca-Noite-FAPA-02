@@ -1,10 +1,13 @@
 from django.db.models import Prefetch
 from django.shortcuts import render, get_object_or_404, redirect
+from rest_framework import filters, viewsets
 
 from accounts.decorators import employee_required
+from accounts.permissions import IsEmployeeOrReadOnly
 
 from .forms import PropertyForm
 from .models import Property
+from .serializer import PropertySerializer
 from rooms.models import Room
 from reservations.models import Reservation
 
@@ -107,3 +110,12 @@ def detail_property(request, id_property):
         'available_count': available_count,
     }
     return render(request, template_name, context)
+
+
+class PropertyViewSet(viewsets.ModelViewSet):
+    queryset = Property.objects.all()
+    serializer_class = PropertySerializer
+    permission_classes = [IsEmployeeOrReadOnly]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name', 'description', 'address']
+    ordering_fields = ['name', 'rating', 'created_at']
