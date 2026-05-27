@@ -18,9 +18,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
+from accounts.api import MeView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('auth/me/', MeView.as_view(), name='auth_me'),
     path('', include('core.urls', namespace='core')),
     path('service_categories/', include('service_categories.urls', namespace='service_categories')),
     path('services/', include('services.urls', namespace='services')),
