@@ -1,10 +1,14 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from rest_framework import filters, viewsets
+from rest_framework.permissions import IsAuthenticated
 
 from accounts.decorators import employee_required
+from accounts.permissions import IsEmployee
 
 from .forms import GuestForm
 from .models import Guest
+from .serializer import GuestSerializer
 
 
 @employee_required
@@ -63,3 +67,16 @@ def search_guests(request):
     guests = Guest.objects.filter(last_name__icontains=query)
     context = {'guests': guests, 'query': query}
     return render(request, template_name, context)
+
+
+class GuestViewSet(viewsets.ModelViewSet):
+    queryset = Guest.objects.all()
+    serializer_class = GuestSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['first_name', 'last_name', 'document', 'email']
+    ordering_fields = ['first_name', 'last_name', 'loyalty_points']
+
+    def get_permissions(self):
+        if self.action == 'create':
+            return [IsAuthenticated()]
+        return [IsEmployee()]
