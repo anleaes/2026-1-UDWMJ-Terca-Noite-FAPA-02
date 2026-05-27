@@ -1,9 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from rest_framework import filters, viewsets
 
 from accounts.decorators import employee_required
+from accounts.permissions import IsEmployeeOrReadOnly
 
 from .forms import RoomForm
 from .models import Room
+from .serializer import RoomSerializer
 
 
 def list_rooms(request):
@@ -54,3 +57,12 @@ def search_rooms(request):
     rooms = [room for room in list(Room.objects.select_related('property', 'room_type').filter(number__icontains=query).order_by('property__name', 'number')) if getattr(room, 'is_active', True)]
     context = {'rooms': rooms, 'query': query}
     return render(request, 'rooms/list_rooms.html', context)
+
+
+class RoomViewSet(viewsets.ModelViewSet):
+    queryset = Room.objects.select_related('property', 'room_type').all()
+    serializer_class = RoomSerializer
+    permission_classes = [IsEmployeeOrReadOnly]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['number', 'description', 'property__name']
+    ordering_fields = ['number', 'floor', 'daily_rate']
