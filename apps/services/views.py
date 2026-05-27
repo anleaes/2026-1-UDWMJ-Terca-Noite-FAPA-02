@@ -1,10 +1,13 @@
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
+from rest_framework import filters, viewsets
 
 from accounts.decorators import employee_required
+from accounts.permissions import IsEmployeeOrReadOnly
 
 from .forms import ServiceForm
 from .models import Service
+from .serializer import ServiceSerializer
 
 
 def list_services(request):
@@ -60,3 +63,12 @@ def search_services(request):
     )
     context = {'services': services, 'query': query}
     return render(request, template_name, context)
+
+
+class ServiceViewSet(viewsets.ModelViewSet):
+    queryset = Service.objects.select_related('category').all()
+    serializer_class = ServiceSerializer
+    permission_classes = [IsEmployeeOrReadOnly]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name', 'description', 'category__name']
+    ordering_fields = ['name', 'price']
