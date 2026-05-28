@@ -27,7 +27,7 @@
             <p class="card-meta">{{ property.address }}</p>
             <p class="card-description">{{ property.description|truncatewords:20 }}</p>
             <a href="{% url 'properties:detail_property' property.id %}" class="btn btn--primary btn--sm">Ver todas as Informações</a>
-            {% if user.is_authenticated %}
+            {% if user.is_superuser %}
                 <div class="card-actions">
                     <a href="{% url 'properties:edit_property' property.id %}" class="btn btn--secondary btn--sm">Editar</a>
                     <a href="{% url 'properties:delete_property' property.id %}" class="btn btn--danger btn--sm" onclick="return confirm('Confirma exclusão?')">Excluir</a>

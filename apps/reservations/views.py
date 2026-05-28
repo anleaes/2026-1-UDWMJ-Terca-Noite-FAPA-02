@@ -7,8 +7,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from accounts.decorators import employee_required
-from accounts.permissions import IsEmployee
+from accounts.decorators import superuser_required
 from guests.models import Guest
 from invoices.models import Invoice
 from rooms.models import Room
@@ -18,15 +17,21 @@ from .models import Reservation
 from .serializer import ReservationSerializer
 
 
-@employee_required
+@login_required(login_url='/accounts/login/')
 def list_reservations(request):
     template_name = 'reservations/list_reservations.html'
-    reservations = Reservation.objects.select_related('guest', 'employee', 'room').all()
-    context = {'reservations': reservations}
+    reservations = Reservation.objects.select_related('guest', 'employee', 'room')
+    if request.user.is_superuser:
+        reservations = reservations.all()
+        can_manage = True
+    else:
+        reservations = reservations.filter(guest__user=request.user)
+        can_manage = False
+    context = {'reservations': reservations, 'can_manage_reservations': can_manage}
     return render(request, template_name, context)
 
 
-@employee_required
+@superuser_required
 def add_reservation(request):
     template_name = 'reservations/add_reservation.html'
     context = {}
@@ -41,7 +46,7 @@ def add_reservation(request):
     return render(request, template_name, context)
 
 
-@employee_required
+@superuser_required
 def edit_reservation(request, id_reservation):
     template_name = 'reservations/add_reservation.html'
     reservation = get_object_or_404(Reservation, id=id_reservation)
@@ -55,21 +60,25 @@ def edit_reservation(request, id_reservation):
     return render(request, template_name, {'form': form})
 
 
-@employee_required
+@superuser_required
 def delete_reservation(request, id_reservation):
     reservation = get_object_or_404(Reservation, id=id_reservation)
     reservation.delete()
     return redirect('reservations:list_reservations')
 
 
-@employee_required
+@login_required(login_url='/accounts/login/')
 def search_reservations(request):
     template_name = 'reservations/list_reservations.html'
     query = request.GET.get('query', '')
-    reservations = Reservation.objects.select_related('guest', 'employee', 'room').filter(
-        guest__last_name__icontains=query
-    )
-    context = {'reservations': reservations, 'query': query}
+    reservations = Reservation.objects.select_related('guest', 'employee', 'room')
+    if request.user.is_superuser:
+        reservations = reservations.filter(guest__last_name__icontains=query)
+        can_manage = True
+    else:
+        reservations = reservations.filter(guest__user=request.user, guest__last_name__icontains=query)
+        can_manage = False
+    context = {'reservations': reservations, 'query': query, 'can_manage_reservations': can_manage}
     return render(request, template_name, context)
 
 
@@ -96,7 +105,7 @@ def book_room(request, id_room):
     return render(request, template_name, context)
 
 
-@employee_required
+@superuser_required
 def confirm_reservation(request, id_reservation):
     reservation = get_object_or_404(Reservation, id=id_reservation)
     reservation.status = 'CONFIRMED'
