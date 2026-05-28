@@ -1,9 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from rest_framework import filters, viewsets
 
 from accounts.decorators import employee_required
+from accounts.permissions import IsEmployee
 
 from .forms import ReservationItemForm
 from .models import ReservationItem
+from .serializer import ReservationItemSerializer
 
 
 @employee_required
@@ -59,3 +62,12 @@ def search_reservation_items(request):
     )
     context = {'items': items, 'query': query}
     return render(request, template_name, context)
+
+
+class ReservationItemViewSet(viewsets.ModelViewSet):
+    queryset = ReservationItem.objects.select_related('reservation', 'service').all()
+    serializer_class = ReservationItemSerializer
+    permission_classes = [IsEmployee]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['service__name']
+    ordering_fields = ['service_date', 'quantity', 'subtotal']
