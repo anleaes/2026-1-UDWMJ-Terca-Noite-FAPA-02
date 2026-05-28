@@ -1,8 +1,12 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework import routers
 
 from . import views
 
 app_name = 'reservations'
+
+router = routers.SimpleRouter()
+router.register('', views.ReservationViewSet, basename='api-reservations')
 
 urlpatterns = [
     path('listar/', views.list_reservations, name='list_reservations'),
@@ -12,4 +16,5 @@ urlpatterns = [
     path('buscar/', views.search_reservations, name='search_reservations'),
     path('reservar/<int:id_room>/', views.book_room, name='book_room'),
     path('confirmar/<int:id_reservation>/', views.confirm_reservation, name='confirm_reservation'),
+    path('', include(router.urls)),
 ]
