@@ -2,14 +2,20 @@ import uuid
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+from rest_framework import filters, viewsets
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from accounts.decorators import employee_required
+from accounts.permissions import IsEmployee
 from guests.models import Guest
 from invoices.models import Invoice
 from rooms.models import Room
 
 from .forms import ReservationBookingForm, ReservationForm
 from .models import Reservation
+from .serializer import ReservationSerializer
 
 
 @employee_required
@@ -103,3 +109,53 @@ def confirm_reservation(request, id_reservation):
         },
     )
     return redirect('reservations:list_reservations')
+
+
+class ReservationViewSet(viewsets.ModelViewSet):
+    serializer_class = ReservationSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['guest__first_name', 'guest__last_name', 'room__number']
+    ordering_fields = ['check_in', 'check_out', 'created_at']
+
+    def get_queryset(self):
+        user = self.request.user
+        if hasattr(user, 'employee_profile'):
+            return Reservation.objects.select_related('guest', 'employee', 'room').all()
+        if hasattr(user, 'guest_profile'):
+            return Reservation.objects.select_related('guest', 'employee', 'room').filter(
+                guest=user.guest_profile
+            )
+        return Reservation.objects.none()
+
+    @action(detail=False, methods=['post'], url_path=r'book/(?P<id_room>\d+)')
+    def book_room(self, request, id_room=None):
+        room = get_object_or_404(Room, id=id_room)
+        try:
+            guest = request.user.guest_profile
+        except (Guest.DoesNotExist, AttributeError):
+            return Response({'detail': 'Cadastro de hospede necessario.'}, status=400)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        check_in = serializer.validated_data['check_in']
+        check_out = serializer.validated_data['check_out']
+        reservation = serializer.save(
+            guest=guest,
+            room=room,
+            total=(check_out - check_in).days * room.daily_rate,
+        )
+        return Response(self.get_serializer(reservation).data, status=201)
+
+    @action(detail=True, methods=['post'], permission_classes=[IsEmployee])
+    def confirm(self, request, pk=None):
+        reservation = self.get_object()
+        reservation.status = 'CONFIRMED'
+        reservation.save()
+        Invoice.objects.get_or_create(
+            reservation=reservation,
+            defaults={
+                'number': f'INV-{uuid.uuid4().hex[:8].upper()}',
+                'amount': reservation.total,
+            },
+        )
+        return Response(self.get_serializer(reservation).data)
