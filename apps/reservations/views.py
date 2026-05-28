@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from accounts.decorators import superuser_required
+from accounts.permissions import IsEmployee
 from guests.models import Guest
 from invoices.models import Invoice
 from rooms.models import Room
