@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from rest_framework import filters, viewsets
@@ -32,8 +33,10 @@ def add_service(request):
     return render(request, template_name, context)
 
 
-@employee_required
+@login_required(login_url='/accounts/login/')
 def edit_service(request, id_service):
+    if not request.user.is_superuser:
+        return redirect('services:list_services')
     template_name = 'services/add_service.html'
     service = get_object_or_404(Service, id=id_service)
     if request.method == 'POST':
@@ -46,8 +49,10 @@ def edit_service(request, id_service):
     return render(request, template_name, {'form': form})
 
 
-@employee_required
+@login_required(login_url='/accounts/login/')
 def delete_service(request, id_service):
+    if not request.user.is_superuser:
+        return redirect('services:list_services')
     service = get_object_or_404(Service, id=id_service)
     service.delete()
     return redirect('services:list_services')

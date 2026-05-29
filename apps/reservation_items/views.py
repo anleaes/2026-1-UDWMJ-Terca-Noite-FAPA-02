@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from rest_framework import filters, viewsets
 
@@ -17,17 +18,17 @@ def list_reservation_items(request):
     return render(request, template_name, context)
 
 
-@employee_required
+@login_required(login_url='/accounts/login/')
 def add_reservation_item(request):
     template_name = 'reservation_items/add_reservation_item.html'
     context = {}
     if request.method == 'POST':
-        form = ReservationItemForm(request.POST)
+        form = ReservationItemForm(request.POST, user=request.user)
         if form.is_valid():
             form.save()
-            return redirect('reservation_items:list_reservation_items')
+            return redirect('services:list_services')
     else:
-        form = ReservationItemForm()
+        form = ReservationItemForm(user=request.user)
     context['form'] = form
     return render(request, template_name, context)
 
@@ -37,12 +38,12 @@ def edit_reservation_item(request, id_item):
     template_name = 'reservation_items/add_reservation_item.html'
     item = get_object_or_404(ReservationItem, id=id_item)
     if request.method == 'POST':
-        form = ReservationItemForm(request.POST, instance=item)
+        form = ReservationItemForm(request.POST, instance=item, user=request.user)
         if form.is_valid():
             form.save()
             return redirect('reservation_items:list_reservation_items')
     else:
-        form = ReservationItemForm(instance=item)
+        form = ReservationItemForm(instance=item, user=request.user)
     return render(request, template_name, {'form': form})
 
 
