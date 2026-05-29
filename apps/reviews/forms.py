@@ -8,13 +8,16 @@ from .models import Review
 class ReviewForm(forms.ModelForm):
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
-
-        reservations = Reservation.objects.select_related('guest', 'room')
+        reservations = Reservation.objects.select_related('guest', 'room__property')
         if user and user.is_superuser:
             queryset = reservations
         else:
             guest_profile = getattr(user, 'guest_profile', None)
-            queryset = reservations.filter(guest=guest_profile) if guest_profile else reservations.none()
+            queryset = (
+                reservations.filter(guest=guest_profile)
+                if guest_profile
+                else reservations.none()
+            )
 
         if self.instance and self.instance.pk and self.instance.reservation_id:
             queryset = queryset | Reservation.objects.filter(pk=self.instance.reservation_id)

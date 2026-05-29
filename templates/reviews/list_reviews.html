@@ -25,10 +25,12 @@
             </h3>
             <p class="card-meta">Reserva #{{ review.reservation.id }} · {{ review.created_at|date:"d/m/Y" }}</p>
             <p class="card-description">{{ review.comment }}</p>
-            {% if user.is_authenticated %}
+            {% if review.id in user_review_ids or user.is_superuser %}
             <div class="card-actions">
                 <a href="{% url 'reviews:edit_review' review.id %}" class="btn btn--secondary btn--sm">Editar</a>
-                <a href="{% url 'reviews:delete_review' review.id %}" class="btn btn--danger btn--sm" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+                {% if user.is_superuser %}
+                    <a href="{% url 'reviews:delete_review' review.id %}" class="btn btn--danger btn--sm" onclick="return confirm('Confirma exclusão?')">Excluir</a>
+                {% endif %}
             </div>
             {% endif %}
         </div>
